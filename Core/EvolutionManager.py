@@ -1,7 +1,7 @@
 from typing import *
 import numpy as np
 
-from FitnessFunction import FitnessFunction
+from Core.FitnessFunction import FitnessFunction
 
 
 # TODO: When specimen written, implement functions that gets info about
