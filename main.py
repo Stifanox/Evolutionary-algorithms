@@ -16,7 +16,6 @@ if __name__ == '__main__':
     specimen = Specimen([chromosome, chromosomeTwo], 2)
     fitnessFunction = FitnessFunction(2, [(-10, 10), (-20, 20)], functionToCalculate())
     evolutionManager = EvolutionManager(10, 10, fitnessFunction)
-
     evolutionManager.setFirstPopulation(initRandomPopulation(10, 7, fitnessFunction))
 
     evoSnapshot = evolutionManager.getEpochSnapshot()

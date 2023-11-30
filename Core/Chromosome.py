@@ -1,6 +1,7 @@
 import multimethod
 from typing import *
 import re
+import math
 
 
 # TODO: check if string chromosome is less or eq to chromosome precision
@@ -128,7 +129,6 @@ class Chromosome:
         else:
             return True
 
-    # FIXME: fix this naive search for good length of chromosome
     def __calculateChromosomeSize(self, chromosomePrecision: int) -> int:
         """
         Calculate chromosome length with given precision.
@@ -136,12 +136,10 @@ class Chromosome:
         :param chromosomePrecision: Number of precision
         :return: Chromosome length
         """
-        i = 1
         (a, b) = self.__functionDomain
-        while True:
-            if (b - a) * 10 ** chromosomePrecision <= 2 ** i - 1:
-                return i
-            i += 1
+
+        chromosomeSize = math.ceil(math.log2((b - a) * 10 ** chromosomePrecision) + math.log2(1))
+        return chromosomeSize
 
     def __convertNumberToChromosome(self, number: float) -> str:
         """
