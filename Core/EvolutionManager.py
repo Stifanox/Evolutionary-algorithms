@@ -5,10 +5,6 @@ from Core.Speciman import Specimen
 from Core.EvolutionState import EvolutionState
 
 
-# TODO: When specimen written, implement functions that get info about
-# TODO: create function for init population
-# TODO: create class that will take a snapshot of current state of manager (EvolutionState)
-# FIXME: move function domain and fitness function somewhere else (maybe)
 
 class EvolutionManager:
 

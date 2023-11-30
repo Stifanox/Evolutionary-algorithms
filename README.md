@@ -1,5 +1,7 @@
 # Algorytmy ewolucyjne - Projekt
 
+## Python version = 3.10
+
 ## Potrzebne biblioteki 
 <ul>
 <li>Matplotlib</li>
