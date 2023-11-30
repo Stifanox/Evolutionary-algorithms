@@ -6,6 +6,9 @@ from Core.FitnessFunction import FitnessFunction
 
 class EvolutionState:
 
+    """
+    Class for creating snapshot of evolution.
+    """
     def __init__(self, populationSize: int, currentEpoch: int, currentPopulation: List[Specimen],
                  selectedPopulation: List[Specimen], newPopulation: List[Specimen], fitnessFunction: FitnessFunction):
         self.populationSize = populationSize

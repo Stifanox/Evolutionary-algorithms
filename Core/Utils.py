@@ -7,6 +7,14 @@ from typing import *
 
 def initRandomPopulation(populationSize: int, chromosomePrecision: int, fitnessFunction: FitnessFunction) -> \
         List[Specimen]:
+    """
+    Creates random population for first population.
+
+    :param populationSize: How many specimen to create.
+    :param chromosomePrecision: Precision for each chromosome.
+    :param fitnessFunction: Fitness function.
+    :return: List of specimens randomly generated.
+    """
     functionDomain = fitnessFunction.getFunctionDomain()
     functionDimension = fitnessFunction.getFunctionDimension()
 

@@ -1,10 +1,4 @@
-import numpy as np
-import re
-# from Core.FitnessFunction import FitnessFunction
 from Core.EvolutionManager import EvolutionManager
-import random
-from Core.TestEvolution import test
-
 import benchmark_functions as bf
 from Core.Speciman import Specimen
 from Core.Chromosome import Chromosome
