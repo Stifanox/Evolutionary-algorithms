@@ -1,12 +1,16 @@
 import multimethod
 from typing import *
 import re
-from functools import singledispatchmethod
 
 
+# TODO: check if string chromosome is less or eq to chromosome precision
 class Chromosome:
 
     def __init__(self, chromosome: str | float, chromosomePrecision: int, functionDomain: Tuple[float, float]):
+        self.__functionDomain = functionDomain
+        self.__chromosomePrecision = chromosomePrecision
+        self.__chromosomeSize = self.__calculateChromosomeSize(self.__chromosomePrecision)
+        self.__chromosome: str | int
         if isinstance(chromosome, str) and self.__checkChromosome(chromosome):
             raise ValueError(f"Chromosome is not built up from zeros and one. Your chromosome: {chromosome}")
 
@@ -14,19 +18,28 @@ class Chromosome:
             raise ValueError(
                 f"Chromosome is out of function domain. Domain: ({functionDomain[0]},{functionDomain[1]}). "
                 f"Your value: {chromosome}")
-
-        self.__functionDomain = functionDomain
-        self.__chromosomePrecision = chromosomePrecision
-        self.__chromosomeSize = self.__calculateChromosomeSize(self.__chromosomePrecision)
+        if isinstance(chromosome, (float, int)) and not self.__checkIfNumberIsInDomain(chromosome):
+            raise ValueError("Number is not in the domain of function")
 
         if isinstance(chromosome, str):
             filledChromosome = self.__fillChromosome(chromosome)
-            self.__chromosome = filledChromosome
+            self.updateChromosome(filledChromosome)
+
         elif isinstance(chromosome, (float, int)):
             self.__chromosome = self.__convertNumberToChromosome(chromosome)
+            self.__chromosome = self.__fillChromosome(self.__chromosome[2:])
 
     def getChromosome(self) -> str:
         return self.__chromosome
+
+    def getChromosomePrecision(self):
+        return self.__chromosomePrecision
+
+    def getChromosomeSize(self):
+        return self.__chromosomeSize
+
+    def getFunctionDomain(self):
+        return tuple(x for x in self.__functionDomain)
 
     def getChromosomeNumericValue(self) -> int:
         """
@@ -50,10 +63,11 @@ class Chromosome:
 
     @multimethod.overload
     def updateChromosome(self, chromosome: int):
-        if self.__functionDomain[0] > chromosome > self.__functionDomain[1]:
+        if not self.__checkIfNumberIsInDomain(chromosome):
             raise ValueError("The number is not in the domain of function")
 
         self.__chromosome = self.__convertNumberToChromosome(chromosome)
+        self.__chromosome = self.__fillChromosome(self.__chromosome[2:])
 
     @staticmethod
     def __checkChromosome(chromosome: str) -> bool:
@@ -85,3 +99,6 @@ class Chromosome:
         tempChromosome = chromosome
         tempChromosome = ("0" * (self.__chromosomeSize - len(chromosome))) + tempChromosome
         return tempChromosome
+
+    def __checkIfNumberIsInDomain(self, chromosome: float):
+        return self.__functionDomain[0] <= chromosome <= self.__functionDomain[1]

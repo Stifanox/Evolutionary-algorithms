@@ -28,7 +28,16 @@ class EvolutionManager:
             raise ValueError("Selected population would exceed the total population size.")
         self.__selectedPopulation.extend(newSpecimens)
 
-    def updateEpoch(self):
+    def updateEpoch(self, warningFlag: bool = True):
+        if self.__currentEpoch > self.__epochCount:
+            print("The evolution has ended, can't go to next stage")
+            return
+
+        if len(self.__newPopulation) < self.__populationSize and warningFlag:
+            print(f"The population of new population is less than declared. Epoch: {self.__currentEpoch}")
+        elif len(self.__newPopulation) > self.__populationSize and warningFlag:
+            print(f"The population of new population is more than declared. Epoch: {self.__currentEpoch}")
+
         self.__currentPopulation = [x for x in self.__newPopulation]
         self.__populationSize = len(self.__currentPopulation)
         self.__newPopulation = []

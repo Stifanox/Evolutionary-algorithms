@@ -4,9 +4,9 @@
 
 ## Potrzebne biblioteki 
 <ul>
-<li>Matplotlib</li>
-<li>Numpy</li>
-<li>Scipy</li>
-<li>Benchmark_functions</li>
-<li>Multimethod - maybe</li>
+<li>Matplotlib - matplotlib</li>
+<li>Numpy - numpy</li>
+<li>Scipy - scipy</li>
+<li>Benchmark_functions - benchmark-functions</li>
+<li>Multimethod - multimethod</li>
 </ul>
