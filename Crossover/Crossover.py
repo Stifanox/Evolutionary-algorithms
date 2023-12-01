@@ -115,7 +115,38 @@ class DiscreteCrossover(CrossoverType):
         self.threshold = threshold
         
     def mix(self, a : Specimen, b : Specimen) -> Tuple[Specimen, Specimen]:
-        return tuple([a, b])
+        setA = a.getChromosomes()
+        setB = b.getChromosomes()
+
+        chromosomeCount = len(setA)
+        if chromosomeCount != len(setB):
+            raise RuntimeError("specimens have different number of chromosomes")
+
+        copyA = deepcopy(a)
+        copyB = deepcopy(b)
+
+        for i in range(chromosomeCount):
+            chA = setA[i].getChromosome()
+            chB = setB[i].getChromosome()
+
+            chromosomeSize = len(chA)
+            if chromosomeSize != len(chB):
+                raise RuntimeError("specimen's chromosomes have different length")
+
+            newChA = []
+            newChB = []
+            for j in range(chromosomeSize):
+                if random.random() >= self.threshold:
+                    newChA.append(chA[j])
+                    newChB.append(chB[j])
+                else:
+                    newChA.append(chB[j])
+                    newChB.append(chA[j])
+
+            copyA.getChromosomes()[i].updateChromosome(''.join(newChA))
+            copyB.getChromosomes()[i].updateChromosome(''.join(newChB))
+
+        return tuple([copyA, copyB])
 
 
 class UniformCrossover(CrossoverType):
@@ -123,4 +154,5 @@ class UniformCrossover(CrossoverType):
         pass
     
     def mix(self, a : Specimen, b : Specimen) -> Tuple[Specimen, Specimen]:
-        return tuple([a, b])
+        discrete = DiscreteCrossover(0.5)
+        return discrete.mix(a, b)
