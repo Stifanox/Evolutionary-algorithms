@@ -37,29 +37,28 @@ class KPointCrossover(CrossoverType):
 
             points = [0]
             for j in range(self.pointCount):
-                points.append(random.randrange(0, chromosomeSize))
+                while True:
+                    n = random.randrange(0, chromosomeSize)
+                    if n not in points:
+                        points.append(n)
+                        break
 
             points.append(chromosomeSize)
             points.sort()
 
-            mask = []
+            newChA = []
+            newChB = []
             swap = False
 
             for j in range(self.pointCount + 1):
                 for k in range(points[j], points[j + 1]):
-                    mask.append(swap)
+                    if swap == False:
+                        newChA.append(chA[k])
+                        newChB.append(chB[k])
+                    else:
+                        newChA.append(chB[k])
+                        newChB.append(chA[k])
                 swap = not swap
-
-            newChA = []
-            newChB = []
-
-            for j in range(chromosomeSize):
-                if mask[j] == False:
-                    newChA.append(chA[j])
-                    newChB.append(chB[j])
-                else:
-                    newChA.append(chB[j])
-                    newChB.append(chA[j])
 
             copyA.getChromosomes()[i].updateChromosome(''.join(newChA))
             copyB.getChromosomes()[i].updateChromosome(''.join(newChB))
