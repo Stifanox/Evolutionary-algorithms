@@ -4,6 +4,7 @@ from Core.Speciman import Specimen
 from Core.Chromosome import Chromosome
 from Core.FitnessFunction import FitnessFunction
 from Core.Utils import initRandomPopulation
+from Elitism.Elitism import Elitism
 
 
 def functionToCalculate():
@@ -18,15 +19,10 @@ if __name__ == '__main__':
     evolutionManager = EvolutionManager(10, 10, fitnessFunction)
     evolutionManager.setFirstPopulation(initRandomPopulation(10, 7, fitnessFunction))
 
-    evoSnapshot = evolutionManager.getEpochSnapshot()
+    evolutionSnapshot = evolutionManager.getEpochSnapshot()
+    currentPopulation = evolutionSnapshot.currentPopulation
+    for specimenInLoop in currentPopulation:
+        specimenInLoop.setSpecimenValue(evolutionSnapshot.fitnessFuntion.calculateValue(specimenInLoop))
 
-    evolutionManager.updateSelectedPopulation([evoSnapshot.currentPopulation[0], evoSnapshot.currentPopulation[1]])
+    Elitism.selectEliteSpecimensPercent(0.41, False, evolutionManager)
 
-    arr = [x for x in evoSnapshot.currentPopulation]
-    arr.extend([evoSnapshot.currentPopulation[1]])
-    evolutionManager.updateNewPopulation(arr)
-
-    for i in range(11):
-        evolutionManager.updateEpoch()
-
-    print(evolutionManager.getEpochSnapshot())
