@@ -71,7 +71,41 @@ class ShuffleCrossover(CrossoverType):
         pass
     
     def mix(self, a : Specimen, b : Specimen) -> Tuple[Specimen, Specimen]:
-        return tuple([a, b])
+        setA = a.getChromosomes()
+        setB = b.getChromosomes()
+
+        chromosomeCount = len(setA)
+        if chromosomeCount != len(setB):
+            raise RuntimeError("specimens have different number of chromosomes")
+
+        copyA = deepcopy(a)
+        copyB = deepcopy(b)
+
+        for i in range(chromosomeCount):
+            chA = list(setA[i].getChromosome())
+            chB = list(setB[i].getChromosome())
+
+            chromosomeSize = len(chA)
+            if chromosomeSize != len(chB):
+                raise RuntimeError("specimen's chromosomes have different length")
+
+            splitPoint = random.randrange(1, chromosomeSize - 1)
+
+            chApart1 = chA[:splitPoint]
+            chBpart1 = chB[:splitPoint]
+            chApart2 = chA[splitPoint:]
+            chBpart2 = chB[splitPoint:]
+
+            random.shuffle(chApart1)
+            random.shuffle(chBpart1)
+            random.shuffle(chApart2)
+            random.shuffle(chBpart2)
+
+            copyA.getChromosomes()[i].updateChromosome(''.join(chApart1) + ''.join(chApart2))
+            copyB.getChromosomes()[i].updateChromosome(''.join(chBpart1) + ''.join(chBpart2))
+
+        kpoint = KPointCrossover(1)
+        return kpoint.mix(copyA, copyB)
 
 
 class DiscreteCrossover(CrossoverType):
