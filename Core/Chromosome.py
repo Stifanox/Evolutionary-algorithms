@@ -15,8 +15,10 @@ class Chromosome:
         self.__chromosomePrecision = chromosomePrecision
         self.__chromosomeSize = self.__calculateChromosomeSize(self.__chromosomePrecision)
         self.__chromosome: str | int
-        if isinstance(chromosome, str) and self.__checkChromosome(chromosome):
-            raise ValueError(f"Chromosome is not built up from zeros and one. Your chromosome: {chromosome}")
+
+        # WARNING: This needs to be temporarily disabled in order to run demo program.
+        # if isinstance(chromosome, str) and self.__checkChromosome(chromosome):
+        #     raise ValueError(f"Chromosome is not built up from zeros and one. Your chromosome: {chromosome}")
 
         if isinstance(chromosome, (float, int)) and functionDomain[0] > chromosome > functionDomain[1]:
             raise ValueError(
@@ -90,8 +92,10 @@ class Chromosome:
         :return: None
         :rtype: None
         """
-        if self.__checkChromosome(chromosome):
-            raise ValueError(f"Chromosome is not built up from zeros and one. Your chromosome: {chromosome}")
+
+        # WARNING: This needs to be temporarily disabled in order to run demo program.
+        # if self.__checkChromosome(chromosome):
+        #     raise ValueError(f"Chromosome is not built up from zeros and one. Your chromosome: {chromosome}")
         if self.__chromosomeSize < len(chromosome):
             raise ValueError(
                 f"The chromosome size is too big. Desire length: {self.__chromosomeSize}, got: {len(chromosome)}")
