@@ -5,18 +5,43 @@ from Core.Speciman import Specimen
 from Core.Chromosome import Chromosome
 
 class CrossoverType:
+    """
+    Classes inheriting from this class represent a single method of crossover.
+    """
+
     def mix(self, a : Specimen, b : Specimen) -> Tuple[Specimen, Specimen]:
+        """
+        Generates two children from two parents.
+
+        :param: a : Specimen ; Parent A.
+        :param: b : Specimen ; Parent B.
+        :return: Tuple of two, newly generated specimens.
+        """
         print("Unknown crossover type")
         return tuple([a, b])
 
 
 class KPointCrossover(CrossoverType):
+    """
+    Implements k-point crossover.
+    """
+
     def __init__(self, pointCount : int):
+        """
+        param: pointCount : int ; Number of "splits" in a single chromosome
+        """
         if pointCount <= 0:
             raise ValueError("pointCount must be positive integer")
         self.pointCount = pointCount
 
     def mix(self, a : Specimen, b : Specimen) -> Tuple[Specimen, Specimen]:
+        """
+        Generates two children from two parents.
+
+        :param: a : Specimen ; Parent A.
+        :param: b : Specimen ; Parent B.
+        :return: Tuple of two, newly generated specimens.
+        """
         setA = a.getChromosomes()
         setB = b.getChromosomes()
 
@@ -67,10 +92,21 @@ class KPointCrossover(CrossoverType):
 
 
 class ShuffleCrossover(CrossoverType):
+    """
+    Implements shuffle crossover.
+    """
+
     def __init__(self):
         pass
-    
+
     def mix(self, a : Specimen, b : Specimen) -> Tuple[Specimen, Specimen]:
+        """
+        Generates two children from two parents.
+
+        :param: a : Specimen ; Parent A.
+        :param: b : Specimen ; Parent B.
+        :return: Tuple of two, newly generated specimens.
+        """
         setA = a.getChromosomes()
         setB = b.getChromosomes()
 
@@ -109,12 +145,26 @@ class ShuffleCrossover(CrossoverType):
 
 
 class DiscreteCrossover(CrossoverType):
+    """
+    Implements discrete crossover.
+    """
+
     def __init__(self, threshold : float):
+        """
+        param: threshold : float ; Value within [0, 1]. The higher the value, the greater the chance of swapping a single gene.
+        """
         if threshold < 0.0 or threshold > 1.0:
             raise ValueError("threshold must be within [0, 1]")
         self.threshold = threshold
-        
+
     def mix(self, a : Specimen, b : Specimen) -> Tuple[Specimen, Specimen]:
+        """
+        Generates two children from two parents.
+
+        :param: a : Specimen ; Parent A.
+        :param: b : Specimen ; Parent B.
+        :return: Tuple of two, newly generated specimens.
+        """
         setA = a.getChromosomes()
         setB = b.getChromosomes()
 
@@ -150,9 +200,20 @@ class DiscreteCrossover(CrossoverType):
 
 
 class UniformCrossover(CrossoverType):
+    """
+    Implements uniform crossover.
+    """
+
     def __init__(self):
         pass
-    
+
     def mix(self, a : Specimen, b : Specimen) -> Tuple[Specimen, Specimen]:
+        """
+        Generates two children from two parents.
+
+        :param: a : Specimen ; Parent A.
+        :param: b : Specimen ; Parent B.
+        :return: Tuple of two, newly generated specimens.
+        """
         discrete = DiscreteCrossover(0.5)
         return discrete.mix(a, b)
