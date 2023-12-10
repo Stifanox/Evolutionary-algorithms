@@ -2,19 +2,31 @@ from Core.Chromosome import Chromosome
 from random import uniform, randint
 
 
-# TODO: Add documentation
 class Mutation:
+    """
+    Class which represents an attempt of mutation occurence on single chromosome.
+    """
+
     def __init__(self, chance: float, chromosome: Chromosome):
+        if chance < 0 or chance > 100:
+            raise ValueError("Chance of mutation can't go below 0 and over 100 (percent).")
+
         self.__chance = chance
         self.__chromosome = chromosome
 
     def mutation(self):
+        """
+        Try to mutate a single chromosome according to the chance given in the constructor.
+        Type of mutation is drawed with probability of 1/3.
+
+        :return: Type of mutation (if mutation occurred) or an information that it didn't occur.
+        """
         isMutationExecuted = uniform(0, 100)
 
         if isMutationExecuted <= self.__chance:
             whichMutation = randint(1, 3)
 
-            def edgeMutation():
+            def edgeMutation() -> None:
                 leftOrRight = randint(1, 2)
 
                 if leftOrRight == 1:
@@ -38,7 +50,7 @@ class Mutation:
                     updatedChromosome = ''.join(chromosomeCopy)
                     self.__chromosome.updateChromosome(updatedChromosome)
 
-            def singlePointMutation():
+            def singlePointMutation() -> None:
                 chromosomeLength = self.__chromosome.getChromosomeSize()
                 pointRandomIndex = randint(1, chromosomeLength - 2)
 
@@ -51,10 +63,10 @@ class Mutation:
                 updatedChromosome = ''.join(chromosomeCopy)
                 self.__chromosome.updateChromosome(updatedChromosome)
 
-            def twoPointMutation():
+            def twoPointMutation() -> None:
                 chromosomeLength = self.__chromosome.getChromosomeSize()
                 pointFirstRandomIndex = randint(1, chromosomeLength - 2)
-                pointSecondRandomIndex = pointFirstRandomIndex
+                pointSecondRandomIndex = randint(1, chromosomeLength - 2)
 
                 while pointFirstRandomIndex == pointSecondRandomIndex:
                     pointSecondRandomIndex = randint(1, chromosomeLength - 2)

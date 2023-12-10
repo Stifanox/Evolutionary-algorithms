@@ -2,20 +2,30 @@ from Core.Chromosome import Chromosome
 from random import uniform, randint
 
 
-# TODO: Add documentation
 class Inversion:
+    """
+    Class which represents an attempt of inversion occurence on single chromosome.
+    """
+
     def __init__(self, chance: float, chromosome: Chromosome):
+        if chance < 0 or chance > 100:
+            raise ValueError("Chance of inversion can't go below 0 and over 100 (percent).")
+
         self.__chance = chance
         self.__chromosome = chromosome
 
     def inversion(self):
+        """
+        Try to inverse a part of single chromosome according to the chance given in the constructor.
+
+        :return: Start and end indexes of inversion (if inversion occurred) or an information that it didn't occur.
+        """
         isInversionExecuted = uniform(0, 100)
 
         if isInversionExecuted <= self.__chance:
             chromosomeLength = self.__chromosome.getChromosomeSize()
             pointStartRandomIndex = randint(0, chromosomeLength - 1)
-            # TODO: Ask if I should get EndRandomIndex like that or by randint(pointStartRandomIndex, chromosomeLength - 1)
-            pointEndRandomIndex = pointStartRandomIndex
+            pointEndRandomIndex = randint(0, chromosomeLength - 1)
 
             while pointEndRandomIndex == pointStartRandomIndex:
                 pointEndRandomIndex = randint(0, chromosomeLength - 1)
