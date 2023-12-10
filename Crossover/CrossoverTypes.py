@@ -1,24 +1,17 @@
 import random
+from abc import ABC
 from typing import *
 from copy import deepcopy
 from Core.Speciman import Specimen
 from Core.Chromosome import Chromosome
 
-class CrossoverType:
+class CrossoverType(ABC):
     """
     Classes inheriting from this class represent a single method of crossover.
     """
 
     def mix(self, a : Specimen, b : Specimen) -> Tuple[Specimen, Specimen]:
-        """
-        Generates two children from two parents.
-
-        :param: a : Specimen ; Parent A.
-        :param: b : Specimen ; Parent B.
-        :return: Tuple of two, newly generated specimens.
-        """
-        print("Unknown crossover type")
-        return tuple([a, b])
+        pass
 
 
 class KPointCrossover(CrossoverType):
