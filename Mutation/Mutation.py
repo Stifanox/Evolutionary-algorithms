@@ -1,13 +1,9 @@
 from Core.Chromosome import Chromosome
 from random import uniform, randint
-from typing import *
-import math
 
 
+# TODO: Add documentation
 class Mutation:
-    """
-
-    """
     def __init__(self, chance: float, chromosome: Chromosome):
         self.__chance = chance
         self.__chromosome = chromosome
@@ -18,7 +14,7 @@ class Mutation:
         if isMutationExecuted <= self.__chance:
             whichMutation = randint(1, 3)
 
-            def EdgeMutation():
+            def edgeMutation():
                 leftOrRight = randint(1, 2)
 
                 if leftOrRight == 1:
@@ -42,9 +38,9 @@ class Mutation:
                     updatedChromosome = ''.join(chromosomeCopy)
                     self.__chromosome.updateChromosome(updatedChromosome)
 
-            def SinglePointMutation():
+            def singlePointMutation():
                 chromosomeLength = self.__chromosome.getChromosomeSize()
-                pointRandomIndex = randint(1, chromosomeLength-2)
+                pointRandomIndex = randint(1, chromosomeLength - 2)
 
                 chromosomeCopy = list(self.__chromosome.getChromosome())
                 if chromosomeCopy[pointRandomIndex] == '0':
@@ -55,10 +51,13 @@ class Mutation:
                 updatedChromosome = ''.join(chromosomeCopy)
                 self.__chromosome.updateChromosome(updatedChromosome)
 
-            def TwoPointMutation():
+            def twoPointMutation():
                 chromosomeLength = self.__chromosome.getChromosomeSize()
                 pointFirstRandomIndex = randint(1, chromosomeLength - 2)
-                pointSecondRandomIndex = randint(1, chromosomeLength - 2)
+                pointSecondRandomIndex = pointFirstRandomIndex
+
+                while pointFirstRandomIndex == pointSecondRandomIndex:
+                    pointSecondRandomIndex = randint(1, chromosomeLength - 2)
 
                 chromosomeCopy = list(self.__chromosome.getChromosome())
                 if chromosomeCopy[pointFirstRandomIndex] == '0':
@@ -75,12 +74,14 @@ class Mutation:
                 self.__chromosome.updateChromosome(updatedChromosome)
 
             optionDict = {
-                1: EdgeMutation,
-                2: SinglePointMutation,
-                3: TwoPointMutation
+                1: edgeMutation,
+                2: singlePointMutation,
+                3: twoPointMutation
             }
 
             optionDict.get(whichMutation)()
 
+            return optionDict[whichMutation].__name__ + " occurred"
+
         else:
-            pass
+            return "Mutation did not occur"
