@@ -1,4 +1,4 @@
-from Mutation import Mutation
+from Mutation import *
 from Inversion import Inversion
 from Core.Chromosome import Chromosome
 
@@ -6,7 +6,13 @@ from Core.Chromosome import Chromosome
 c1 = Chromosome(2, 1, (-3, 3))
 print(c1.getChromosome())
 
-mutating = Mutation(50, c1).mutation()
+mutating = TwoPointMutation(75).mutate(c1)
+print(mutating)
+print(c1.getChromosome())
+mutating = SinglePointMutation(75).mutate(c1)
+print(mutating)
+print(c1.getChromosome())
+mutating = EdgeMutation(75).mutate(c1)
 print(mutating)
 print(c1.getChromosome())
 

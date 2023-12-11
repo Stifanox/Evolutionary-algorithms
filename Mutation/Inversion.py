@@ -8,7 +8,7 @@ class Inversion:
     """
 
     def __init__(self, chance: float, chromosome: Chromosome):
-        if chance < 0 or chance > 100:
+        if chance < 0 or chance > 1:
             raise ValueError("Chance of inversion can't go below 0 and over 100 (percent).")
 
         self.__chance = chance
@@ -20,7 +20,7 @@ class Inversion:
 
         :return: Start and end indexes of inversion (if inversion occurred) or an information that it didn't occur.
         """
-        isInversionExecuted = uniform(0, 100)
+        isInversionExecuted = uniform(0, 1)
 
         if isInversionExecuted <= self.__chance:
             chromosomeLength = self.__chromosome.getChromosomeSize()
