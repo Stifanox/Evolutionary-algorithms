@@ -1,5 +1,7 @@
 from tkinter import *
 from tkinter import ttk
+from DropdownGUI import DropdownGUI
+from typing import List
 
 options = [
     "DiscreteCrossover",
@@ -10,51 +12,53 @@ options = [
 
 
 # TODO: Retrieve values for kpoints and threshold
-class CrossoverGUI:
+class CrossoverGUI(DropdownGUI):
 
-    def __init__(self, value: StringVar, root: Tk):
-        self.__innerFrame = ttk.Frame()
-        self.__value = value
-        # This must be here, otherwise the variable goes out of the scope
-        self.__argumentValue = DoubleVar(value=0)
-        self.__renderOptions(root)
+    def _init_(self, value: StringVar, root: Tk, options: List[str]):
+        super(CrossoverGUI, self)._init_(value, root, options)
 
-    def __renderOptions(self, root: Tk):
-        frame = ttk.Frame(root, padding=20)
-        frame.pack()
-        optionMenu = ttk.OptionMenu(frame, self.__value, options[0], *[name for name in options])
-        optionMenu.pack()
+    def _renderOptions(self, root: Tk):
+        super(CrossoverGUI, self)._renderOptions(root)
 
-        self.__value.trace_add("write", self.__changeFrame)
-        self.__innerFrame = ttk.Frame(frame, padding=10)
-        self.__value.set(options[0])
-        self.__innerFrame.pack()
+    def _changeFrame(self, var, index, mode):
+        super(CrossoverGUI, self)._changeFrame(var, index, mode)
 
-    def __changeFrame(self, var, index, mode):
-        for widget in self.__innerFrame.winfo_children():
-            widget.destroy()
+        if self._value.get() == "DiscreteCrossover":
+            self._renderDiscreteCrossover()
+        elif self._value.get() == "UniformCrossover":
+            self._renderUniformCrossover()
+        elif self._value.get() == "ShuffleCrossover":
+            self._renderShuffleCrossover()
+        elif self._value.get() == "KPointCrossover":
+            self._renderKPointCrossover()
 
-        if self.__value.get() == "DiscreteCrossover":
-            self.__renderDiscreteCrossover()
-            print()
-        elif self.__value.get() == "UniformCrossover":
-            pass
-        elif self.__value.get() == "ShuffleCrossover":
-            pass
-        elif self.__value.get() == "KPointCrossover":
-            self.__renderKPointCrossover()
-
-    def __renderDiscreteCrossover(self):
-        self.__argumentValue.set(0)
-        label = ttk.Label(self.__innerFrame, text="Threshold (0,1)")
+    def _renderDiscreteCrossover(self):
+        self._argumentValue.set(0)
+        label = ttk.Label(self._innerFrame, text="Threshold (0,1)")
         label.pack()
 
-        entry = ttk.Entry(self.__innerFrame, textvariable=self.__argumentValue, width=35)
+        entry = ttk.Entry(self._innerFrame, textvariable=self._argumentValue, width=35)
         entry.pack()
 
-    def __renderKPointCrossover(self):
-        self.__argumentValue.set(0)
-        entry = ttk.Entry(self.__innerFrame, textvariable=self.__argumentValue, width=35)
-        label = ttk.Label(self.__innerFrame, text="Threshold (0,1)")
+    def _renderKPointCrossover(self):
+        self._argumentValue.set(0)
+        entry = ttk.Entry(self._innerFrame, textvariable=self._argumentValue, width=35)
+        label = ttk.Label(self._innerFrame, text="Count of points to cross")
+        label.pack()
+        entry.pack()
+
+    def _renderUniformCrossover(self):
+        self._argumentValue.set(None)
+        entry = ttk.Entry(self._innerFrame, textvariable=self._argumentValue, width=35)
+        label = ttk.Label(self._innerFrame, text="No options for uniform crossover")
+        entry.config(state="disabled")
+        label.pack()
+        entry.pack()
+
+    def _renderShuffleCrossover(self):
+        self._argumentValue.set(None)
+        entry = ttk.Entry(self._innerFrame, textvariable=self._argumentValue, width=35)
+        label = ttk.Label(self._innerFrame, text="No options for shuffle crossover")
+        entry.config(state="disabled")
         label.pack()
         entry.pack()
