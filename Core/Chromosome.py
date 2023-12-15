@@ -4,34 +4,22 @@ import re
 import math
 
 
-# TODO: check if string chromosome is less or eq to chromosome precision
 class Chromosome:
     """
     Class which represent a single chromosome (value) of specimen.
     """
 
-    def __init__(self, chromosome: str | float, chromosomePrecision: int, functionDomain: Tuple[float, float]):
+    def __init__(self, chromosome: str, chromosomePrecision: int, functionDomain: Tuple[float, float]):
         self.__functionDomain = functionDomain
         self.__chromosomePrecision = chromosomePrecision
         self.__chromosomeSize = self.__calculateChromosomeSize(self.__chromosomePrecision)
-        self.__chromosome: str | int
-        if isinstance(chromosome, str) and self.__checkChromosome(chromosome):
+        self.__chromosome = ""
+
+        if self.__checkChromosome(chromosome):
             raise ValueError(f"Chromosome is not built up from zeros and one. Your chromosome: {chromosome}")
 
-        if isinstance(chromosome, (float, int)) and functionDomain[0] > chromosome > functionDomain[1]:
-            raise ValueError(
-                f"Chromosome is out of function domain. Domain: ({functionDomain[0]},{functionDomain[1]}). "
-                f"Your value: {chromosome}")
-        if isinstance(chromosome, (float, int)) and not self.__checkIfNumberIsInDomain(chromosome):
-            raise ValueError("Number is not in the domain of function")
-
-        if isinstance(chromosome, str):
-            filledChromosome = self.__fillChromosome(chromosome)
-            self.updateChromosome(filledChromosome)
-
-        elif isinstance(chromosome, (float, int)):
-            self.__chromosome = self.__convertNumberToChromosome(chromosome)
-            self.__chromosome = self.__fillChromosome(self.__chromosome[2:])
+        filledChromosome = self.__fillChromosome(chromosome)
+        self.updateChromosome(filledChromosome)
 
     def getChromosome(self) -> str:
         """
