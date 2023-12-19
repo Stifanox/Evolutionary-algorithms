@@ -1,4 +1,5 @@
 from Core.EvolutionManager import EvolutionManager
+from Plot.PlotUtils import *
 import matplotlib.pyplot as plt
 from enum import Enum
 import numpy as np
@@ -9,7 +10,8 @@ class PlotLayout(Enum):
     HORIZONTAL = 3
 
 class Plot:
-    def reset(self, layout: PlotLayout):
+    def reset(self, layout: PlotLayout, maximize: bool):
+        self.maximize = maximize
         hspaceVar = 0
         topVar = 1
 
@@ -55,9 +57,9 @@ class Plot:
         # self.yAverage
         # self.yStdDev
 
-    def __init__(self, manager: EvolutionManager, layout: PlotLayout):
+    def __init__(self, manager: EvolutionManager, layout: PlotLayout, maximize: bool):
         self.manager = manager
-        self.reset(layout)
+        self.reset(layout, maximize)
 
         # TODO: Remove:
         self.fig.show()
