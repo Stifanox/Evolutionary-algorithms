@@ -10,8 +10,10 @@ class PlotLayout(Enum):
     HORIZONTAL = 3
 
 class Plot:
-    def reset(self, layout: PlotLayout, maximize: bool):
+    def __init__(self, manager: EvolutionManager, layout: PlotLayout, maximize: bool):
+        self.manager = manager
         self.maximize = maximize
+
         hspaceVar = 0
         topVar = 1
 
@@ -24,12 +26,12 @@ class Plot:
                 hspaceVar = 0.5
                 topVar = 0.95
 
-            case PlotLayout.VERTICAL:
+            case PlotLayout.HORIZONTAL:
                 self.fig, ax = plt.subplots(nrows = 1, ncols = 3, figsize = (9, 3))
                 self.bstAx, self.avgAx, self.sdvAx = ax.flatten()
                 topVar = 0.9
 
-            case PlotLayout.HORIZONTAL:
+            case PlotLayout.VERTICAL:
                 self.fig, ax = plt.subplots(nrows = 3, ncols = 1, figsize = (3, 9))
                 self.bstAx, self.avgAx, self.sdvAx = ax.flatten()
                 hspaceVar = 0.3
@@ -40,9 +42,6 @@ class Plot:
 
         self.fig.tight_layout()
         self.fig.subplots_adjust(top = topVar, hspace = hspaceVar)
-        self.bstAx.set_title("Best specimen")
-        self.avgAx.set_title("Average")
-        self.sdvAx.set_title("Standard deviation")
 
         self.xEpoch = []
         self.yBest = []
@@ -51,16 +50,22 @@ class Plot:
 
     def update(self):
         state = self.manager.getEpochSnapshot()
+
         self.xEpoch.append(state.currentEpoch)
-        # TODO: Add:
-        # self.yBest
-        # self.yAverage
-        # self.yStdDev
+        self.yBest.append(getBestValue(state, self.maximize))
+        self.yAverage.append(getAverageValue(state))
+        self.yStdDev.append(getStandardDeviationValue(state))
 
-    def __init__(self, manager: EvolutionManager, layout: PlotLayout, maximize: bool):
-        self.manager = manager
-        self.reset(layout, maximize)
+        self.bstAx.clear()
+        self.avgAx.clear()
+        self.sdvAx.clear()
 
-        # TODO: Remove:
+        self.bstAx.set_title("Best specimen")
+        self.avgAx.set_title("Average")
+        self.sdvAx.set_title("Standard deviation")
+
+        self.bstAx.plot(self.xEpoch, self.yBest)
+        self.avgAx.plot(self.xEpoch, self.yAverage)
+        self.sdvAx.plot(self.xEpoch, self.yStdDev)
+
         self.fig.show()
-        self.fig.waitforbuttonpress()
