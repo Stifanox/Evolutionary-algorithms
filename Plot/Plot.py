@@ -10,9 +10,11 @@ class PlotLayout(Enum):
     HORIZONTAL = 3
 
 class Plot:
-    def __init__(self, manager: EvolutionManager, layout: PlotLayout, maximize: bool):
+    def __init__(self, manager: EvolutionManager, layout: PlotLayout, maximize: bool, updateInterval: int):
         self.manager = manager
         self.maximize = maximize
+        self.updateInterval = updateInterval
+        self.intervalCounter = 0
 
         hspaceVar = 0
         topVar = 1
@@ -56,16 +58,19 @@ class Plot:
         self.yAverage.append(getAverageValue(state))
         self.yStdDev.append(getStandardDeviationValue(state))
 
-        self.bstAx.clear()
-        self.avgAx.clear()
-        self.sdvAx.clear()
+        self.intervalCounter += 1
+        if self.intervalCounter >= self.updateInterval:
+            self.bstAx.clear()
+            self.avgAx.clear()
+            self.sdvAx.clear()
 
-        self.bstAx.set_title("Best specimen")
-        self.avgAx.set_title("Average")
-        self.sdvAx.set_title("Standard deviation")
+            self.bstAx.set_title("Best specimen")
+            self.avgAx.set_title("Average")
+            self.sdvAx.set_title("Standard deviation")
 
-        self.bstAx.plot(self.xEpoch, self.yBest)
-        self.avgAx.plot(self.xEpoch, self.yAverage)
-        self.sdvAx.plot(self.xEpoch, self.yStdDev)
+            self.bstAx.plot(self.xEpoch, self.yBest)
+            self.avgAx.plot(self.xEpoch, self.yAverage)
+            self.sdvAx.plot(self.xEpoch, self.yStdDev)
 
-        self.fig.show()
+            self.fig.show()
+            self.intervalCounter = 0
