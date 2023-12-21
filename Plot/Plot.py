@@ -12,6 +12,13 @@ class PlotLayout(Enum):
 
 class Plot:
     def __init__(self, manager: EvolutionManager, layout: PlotLayout, maximize: bool, scale: float):
+        """
+        :param: manager ; Reference to the EvolutionManager object.
+        :param: layout ; Selected layout (how plots should be arranged - see 'PlotLayout' enum).
+        :param: maximize ; If true, it finds maximum 'Best specimen' value, otherwise minimum.
+        :param: scale ; Floating point scale of rendered plots. By default, it should be set to 1.
+        """
+
         self.manager = manager
         self.maximize = maximize
         self.scale = scale
@@ -54,12 +61,22 @@ class Plot:
         self.yStdDev = []
 
     def getFigure(self) -> plt.Figure:
+        """
+        :return: 'Figure' object containing plots.
+        """
         return self.fig
 
     def getTargetResolution(self) -> Tuple[int, int]:
+        """
+        :return: Target resolution in pixels (note: if user resizes the window, the values do not change).
+        """
         return tuple([int(self.xsize * 100), int(self.ysize * 100)])
 
     def refreshData(self):
+        """
+        Gathers and saves data internally based on previously set 'manager' object reference.
+        It should be called after each epoch (to prevent missing data points).
+        """
         state = self.manager.getEpochSnapshot()
         self.xEpoch.append(state.currentEpoch)
         self.yBest.append(getBestValue(state, self.maximize))
@@ -67,6 +84,10 @@ class Plot:
         self.yStdDev.append(getStandardDeviationValue(state))
 
     def redraw(self):
+        """
+        Updates plots based on previously stored data by the 'refreshData()' method.
+        It should be called after 'refreshData()', with some interval (e.g. every 'n' number of iterations).
+        """
         self.bstAx.clear()
         self.avgAx.clear()
         self.sdvAx.clear()
