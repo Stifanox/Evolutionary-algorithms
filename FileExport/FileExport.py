@@ -37,16 +37,13 @@ class FileExport:
         """
         state = self.manager.getEpochSnapshot()
 
-        def value_lambda():
-            return 0
-
         match variant:
             case FileExportVariant.Best:
-                value_lambda = lambda: getBestValue(state, maximize)
+                value = getBestValue(state, maximize)
             case FileExportVariant.Average:
-                value_lambda = lambda: getAverageValue(state)
+                value = getAverageValue(state)
             case FileExportVariant.StandardDeviation:
-                value_lambda = lambda: getStandardDeviationValue(state)
+                value = getStandardDeviationValue(state)
             case _:
                 raise ValueError("unknown FileExportVariant")
 
@@ -56,4 +53,4 @@ class FileExport:
                 file.write(f'epoch;value_{variant.name}\n')
 
         with open(f'{self.path}_{variant.name}{self.timestamp}.txt', 'a') as file:
-            file.write(f'{state.currentEpoch};{value_lambda()}\n')
+            file.write(f'{state.currentEpoch};{value}\n')
