@@ -12,7 +12,6 @@ options = [
 ]
 
 
-# TODO: Retrieve values for kpoints and threshold
 class CrossoverGUI(DropdownGUI):
 
     def __init__(self, state: DropdownVariable, root: Frame, options: List[str]):
@@ -49,7 +48,7 @@ class CrossoverGUI(DropdownGUI):
         entry.pack()
 
     def _renderUniformCrossover(self):
-        self._state.argumentValue.set(None)
+        self._state.argumentValue.set(-1)
         entry = ttk.Entry(self._innerFrame, textvariable=self._state.argumentValue, width=35)
         label = ttk.Label(self._innerFrame, text="No options for uniform crossover")
         entry.config(state="disabled")
@@ -57,7 +56,7 @@ class CrossoverGUI(DropdownGUI):
         entry.pack()
 
     def _renderShuffleCrossover(self):
-        self._state.argumentValue.set(None)
+        self._state.argumentValue.set(-1)
         entry = ttk.Entry(self._innerFrame, textvariable=self._state.argumentValue, width=35)
         label = ttk.Label(self._innerFrame, text="No options for shuffle crossover")
         entry.config(state="disabled")

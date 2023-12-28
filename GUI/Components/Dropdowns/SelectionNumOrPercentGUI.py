@@ -5,6 +5,7 @@ from typing import List
 
 from GUI.VariablesGUI import DropdownVariable
 
+
 class SelectionNumOrPercentGUI(DropdownGUI):
 
     def __init__(self, state: DropdownVariable, root: Frame, options: List[str]):

@@ -1,5 +1,6 @@
 from tkinter import *
 from tkinter import ttk
+import matplotlib
 from GUI.Components.Dropdowns.CrossoverGUI import CrossoverGUI
 from GUI.Components.Dropdowns.MutationGUI import MutationGUI
 from GUI.Components.Dropdowns.FunctionsGUI import FunctionGUI
@@ -13,6 +14,7 @@ from GUI.Components.Entires.EpochCountGUI import EpochCountGUI
 from GUI.Components.Checkboxes.ShowChartGUI import ShowChartGUI
 from GUI.Components.Dropdowns.SelectionNumOrPercentGUI import SelectionNumOrPercentGUI
 from GUI.Components.Dropdowns.SelectionTypeGUI import SelectionTypeGUI
+from typing import Callable
 
 mutationOptions = ["TwoPointMutation", "SinglePointMutation", "EdgeMutation"]
 crossoverOptions = ["KPointCrossover", "ShuffleCrossover", "DiscreteCrossover", "UniformCrossover"]
@@ -23,12 +25,19 @@ functionOptions = ["Hypersphere", "Hyperellipsoid", "Schwefel", "Ackley", "Micha
 numOrPercentOptions = ["Number", "Percent"]
 selectionOptions = ["Top", "Roulette", "Tournament"]
 
+matplotlib.use("TkAgg")
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_tkagg import (
+    FigureCanvasTkAgg,
+)
+
 
 class ApplicationGUI(Tk):
 
-    def __init__(self):
+    def __init__(self, startEvolutionFunc: Callable):
         super().__init__()
         self.geometry("400x1000")
+        self.__startEvolutionFunc = startEvolutionFunc
         self.__leftFrame = ttk.Frame()
         self.__crossoverType = DropdownVariable(StringVar(self), DoubleVar(self, value=0))
         self.__selectionType = DropdownVariable(StringVar(self), DoubleVar(self, value=0))
@@ -37,7 +46,7 @@ class ApplicationGUI(Tk):
         self.__elitismType = DropdownVariable(StringVar(self), DoubleVar(self, value=0))
 
         self.__useInversion = CheckboxVariable(BooleanVar(self), DoubleVar(self, value=0))
-        self.__specimenCount = IntVar(self, value=0)
+        self.__specimenCount = DoubleVar(self, value=0)
         self.__domainLowerBound = DoubleVar(self, value=0)
         self.__domainUpperBound = DoubleVar(self, value=10)
         self.__epochCount = IntVar(self, value=0)
@@ -62,11 +71,12 @@ class ApplicationGUI(Tk):
         SelectionNumOrPercentGUI(self.__selectionType, self.__leftFrame, numOrPercentOptions)
         SelectionTypeGUI(self.__selectionOption, self.__leftFrame, selectionOptions)
         ShowChartGUI(self.__showChart, self.__leftFrame, "Show chart")
+        ttk.Button(self.__leftFrame, command=self.__startEvolutionFunc, text="Start evolution").pack()
 
     def getParameters(self):
         parameters = {
             'crossoverType': self.__crossoverType.typeName.get(),
-            'crossoverArgument': self.__crossoverType.argumentValue.get(),
+            'crossoverArgument': self.__crossoverType.argumentValue.get() if self.__crossoverType.argumentValue.get() != -1 else None,
             'selectionNumOrPercent': self.__selectionType.typeName.get(),
             'selectionArgument': self.__selectionType.argumentValue.get(),
             'selectionType': self.__selectionOption.typeName.get(),
@@ -87,8 +97,25 @@ class ApplicationGUI(Tk):
         }
         return parameters
 
+    def renderPlot(self):
+        data = {
+            'Python': 11.27,
+            'C': 11.16,
+            'Java': 10.46,
+            'C++': 7.5,
+            'C#': 5.26
+        }
+        languages = data.keys()
+        popularity = data.values()
+        figure = Figure(figsize=(5, 5), dpi=100)
 
-test = ApplicationGUI()
-test.mainloop()
-parameters = test.getParameters()
-print(parameters)
+        # create FigureCanvasTkAgg object
+        figure_canvas = FigureCanvasTkAgg(figure, self)
+
+        # create axes
+        axes = figure.add_subplot()
+
+        # create the barchart
+        axes.bar(languages, popularity)
+
+        figure_canvas.get_tk_widget().grid(row=0, column=1, padx=(50, 0), pady=(50, 0))

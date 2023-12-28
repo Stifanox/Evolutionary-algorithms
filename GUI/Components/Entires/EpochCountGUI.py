@@ -2,6 +2,7 @@ from tkinter import IntVar, Frame
 
 from GUI.Components.Base.EntryGUI import EntryGUI
 
+
 class EpochCountGUI(EntryGUI):
 
     def __init__(self, state: IntVar, root: Frame, label: str):

@@ -11,6 +11,7 @@ options = [
     "Tournament"
 ]
 
+
 class SelectionTypeGUI(DropdownGUI):
 
     def __init__(self, state: DropdownVariable, root: Frame, options: List[str]):
