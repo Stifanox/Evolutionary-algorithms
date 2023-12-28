@@ -5,7 +5,7 @@ from abc import ABC, abstractmethod
 
 class EntryGUI(ABC):
 
-    def __init__(self, state: IntVar, root: Frame, label: str):
+    def __init__(self, state: DoubleVar, root: Frame, label: str):
         self._state = state
         self._label = label
         self._innerFrame = ttk.Frame(root)

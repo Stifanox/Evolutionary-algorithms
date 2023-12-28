@@ -11,6 +11,8 @@ from GUI.Components.Entires.SpecimenCountGUI import SpecimenCountGUI
 from GUI.Components.Entires.DomainGUI import DomainGUI
 from GUI.Components.Entires.EpochCountGUI import EpochCountGUI
 from GUI.Components.Checkboxes.ShowChartGUI import ShowChartGUI
+from GUI.Components.Dropdowns.SelectionNumOrPercentGUI import SelectionNumOrPercentGUI
+from GUI.Components.Dropdowns.SelectionTypeGUI import SelectionTypeGUI
 
 mutationOptions = ["TwoPointMutation", "SinglePointMutation", "EdgeMutation"]
 crossoverOptions = ["KPointCrossover", "ShuffleCrossover", "DiscreteCrossover", "UniformCrossover"]
@@ -18,14 +20,15 @@ functionOptions = ["Hypersphere", "Hyperellipsoid", "Schwefel", "Ackley", "Micha
                    "De Jong 3", "De Jong 5", "Martin and Gaddy", "Griewank", "Easom", "Goldstein and Price",
                    "Picheny, Goldstein and Price", "Styblinski and Tang", "Mc Cormick", "Rana", "Egg Holder", "Keane",
                    "Schaffer 2", "Himmelblau", "Pits and Holes"]
-elitismOptions = ["Number", "Percent"]
+numOrPercentOptions = ["Number", "Percent"]
+selectionOptions = ["Top", "Roulette", "Tournament"]
 
 
 class ApplicationGUI(Tk):
 
     def __init__(self):
         super().__init__()
-        self.geometry("400x800")
+        self.geometry("400x1000")
         self.__leftFrame = ttk.Frame()
         self.__crossoverType = DropdownVariable(StringVar(self), DoubleVar(self, value=0))
         self.__selectionType = DropdownVariable(StringVar(self), DoubleVar(self, value=0))
@@ -35,9 +38,10 @@ class ApplicationGUI(Tk):
 
         self.__useInversion = CheckboxVariable(BooleanVar(self), DoubleVar(self, value=0))
         self.__specimenCount = IntVar(self, value=0)
-        self.__domainLowerBound = IntVar(self, value=0)
-        self.__domainUpperBound = IntVar(self, value=10)
+        self.__domainLowerBound = DoubleVar(self, value=0)
+        self.__domainUpperBound = DoubleVar(self, value=10)
         self.__epochCount = IntVar(self, value=0)
+        self.__selectionOption = DropdownVariable(StringVar(self), DoubleVar(self, value=0))
         self.__showChart = BooleanVar(self)
         self.__toMaximize = BooleanVar(self)
 
@@ -48,21 +52,24 @@ class ApplicationGUI(Tk):
         CrossoverGUI(self.__crossoverType, self.__leftFrame, crossoverOptions)
         MutationGUI(self.__mutationType, self.__leftFrame, mutationOptions)
         FunctionGUI(self.__functionType, self.__leftFrame, functionOptions)
-        ElitismGUI(self.__elitismType, self.__leftFrame, elitismOptions)
+        ElitismGUI(self.__elitismType, self.__leftFrame, numOrPercentOptions)
         InversionGUI(self.__useInversion, self.__leftFrame, "Use inversion", "Probability (0,1)")
         MaximizeGUI(self.__toMaximize, self.__leftFrame, "Maximize value")
         SpecimenCountGUI(self.__specimenCount, self.__leftFrame, "Count of specimens")
         DomainGUI(self.__domainLowerBound, self.__leftFrame, "Lower bound of the domain")
         DomainGUI(self.__domainUpperBound, self.__leftFrame, "Upper bound of the domain")
         EpochCountGUI(self.__epochCount, self.__leftFrame, "Count of epochs")
+        SelectionNumOrPercentGUI(self.__selectionType, self.__leftFrame, numOrPercentOptions)
+        SelectionTypeGUI(self.__selectionOption, self.__leftFrame, selectionOptions)
         ShowChartGUI(self.__showChart, self.__leftFrame, "Show chart")
 
     def getParameters(self):
         parameters = {
             'crossoverType': self.__crossoverType.typeName.get(),
             'crossoverArgument': self.__crossoverType.argumentValue.get(),
-            #'selectionType': self.__selectionType.typeName.get(),
-            #'selectionArgument': self.__selectionType.argumentValue.get(),
+            'selectionNumOrPercent': self.__selectionType.typeName.get(),
+            'selectionArgument': self.__selectionType.argumentValue.get(),
+            'selectionType': self.__selectionOption.typeName.get(),
             'mutationType': self.__mutationType.typeName.get(),
             'mutationProbability': self.__mutationType.argumentValue.get(),
             'functionType': self.__functionType.typeName.get(),
@@ -81,8 +88,7 @@ class ApplicationGUI(Tk):
         return parameters
 
 
-ApplicationGUI().mainloop()
-
-testgui = ApplicationGUI()
-parameters = testgui.getParameters()
+test = ApplicationGUI()
+test.mainloop()
+parameters = test.getParameters()
 print(parameters)
