@@ -14,22 +14,24 @@ from GUI.Components.Entires.EpochCountGUI import EpochCountGUI
 from GUI.Components.Checkboxes.ShowChartGUI import ShowChartGUI
 from GUI.Components.Dropdowns.SelectionNumOrPercentGUI import SelectionNumOrPercentGUI
 from GUI.Components.Dropdowns.SelectionTypeGUI import SelectionTypeGUI
+from GUI.Components.Entires.ChromosomePrecisionGUI import ChromosomePrecisionGUI
 from typing import Callable
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_tkagg import (
+    FigureCanvasTkAgg
+)
+from GUI.GUIParams import GUIParams
 
 mutationOptions = ["TwoPointMutation", "SinglePointMutation", "EdgeMutation"]
 crossoverOptions = ["KPointCrossover", "ShuffleCrossover", "DiscreteCrossover", "UniformCrossover"]
 functionOptions = ["Hypersphere", "Hyperellipsoid", "Schwefel", "Ackley", "Michalewicz", "Rastrigin", "Rosenbrock",
-                   "De Jong 3", "De Jong 5", "Martin and Gaddy", "Griewank", "Easom", "Goldstein and Price",
-                   "Picheny, Goldstein and Price", "Styblinski and Tang", "Mc Cormick", "Rana", "Egg Holder", "Keane",
-                   "Schaffer 2", "Himmelblau", "Pits and Holes"]
+                   "De Jong 3", "De Jong 5", "Martin And Gaddy", "Griewank", "Easom", "Goldstein and Price",
+                   "Picheny, Goldstein And Price", "Styblinski And Tang", "Mc Cormick", "Rana", "Egg Holder", "Keane",
+                   "Schaffer 2", "Himmelblau", "Pits And Holes"]
 numOrPercentOptions = ["Number", "Percent"]
 selectionOptions = ["Top", "Roulette", "Tournament"]
 
 matplotlib.use("TkAgg")
-from matplotlib.figure import Figure
-from matplotlib.backends.backend_tkagg import (
-    FigureCanvasTkAgg,
-)
 
 
 class ApplicationGUI(Tk):
@@ -39,17 +41,18 @@ class ApplicationGUI(Tk):
         self.geometry("400x1000")
         self.__startEvolutionFunc = startEvolutionFunc
         self.__leftFrame = ttk.Frame()
-        self.__crossoverType = DropdownVariable(StringVar(self), DoubleVar(self, value=0))
-        self.__selectionType = DropdownVariable(StringVar(self), DoubleVar(self, value=0))
-        self.__mutationType = DropdownVariable(StringVar(self), DoubleVar(self, value=0))
+        self.__crossoverType = DropdownVariable(StringVar(self), DoubleVar(self, value=2))
+        self.__selectionType = DropdownVariable(StringVar(self), DoubleVar(self, value=5))
+        self.__mutationType = DropdownVariable(StringVar(self), DoubleVar(self, value=0.2))
         self.__functionType = DropdownVariable(StringVar(self), DoubleVar(self, value=0))
-        self.__elitismType = DropdownVariable(StringVar(self), DoubleVar(self, value=0))
+        self.__elitismType = DropdownVariable(StringVar(self), DoubleVar(self, value=1))
 
         self.__useInversion = CheckboxVariable(BooleanVar(self), DoubleVar(self, value=0))
-        self.__specimenCount = DoubleVar(self, value=0)
-        self.__domainLowerBound = DoubleVar(self, value=0)
+        self.__specimenCount = DoubleVar(self, value=100)
+        self.__domainLowerBound = DoubleVar(self, value=-10)
         self.__domainUpperBound = DoubleVar(self, value=10)
-        self.__epochCount = IntVar(self, value=0)
+        self.__epochCount = IntVar(self, value=100)
+        self.__chromosomePrecision = IntVar(self, value=6)
         self.__selectionOption = DropdownVariable(StringVar(self), DoubleVar(self, value=0))
         self.__showChart = BooleanVar(self)
         self.__toMaximize = BooleanVar(self)
@@ -58,6 +61,7 @@ class ApplicationGUI(Tk):
         self.__leftFrame.grid(row=0, column=0, padx=(50, 0))
 
     def renderElements(self):
+        ChromosomePrecisionGUI(self.__chromosomePrecision, self.__leftFrame, "Chromosome Precision")
         CrossoverGUI(self.__crossoverType, self.__leftFrame, crossoverOptions)
         MutationGUI(self.__mutationType, self.__leftFrame, mutationOptions)
         FunctionGUI(self.__functionType, self.__leftFrame, functionOptions)
@@ -74,29 +78,30 @@ class ApplicationGUI(Tk):
         ttk.Button(self.__leftFrame, command=self.__startEvolutionFunc, text="Start evolution").pack()
 
     def getParameters(self):
-        parameters = {
-            'crossoverType': self.__crossoverType.typeName.get(),
-            'crossoverArgument': self.__crossoverType.argumentValue.get() if self.__crossoverType.argumentValue.get() != -1 else None,
-            'selectionNumOrPercent': self.__selectionType.typeName.get(),
-            'selectionArgument': self.__selectionType.argumentValue.get(),
-            'selectionType': self.__selectionOption.typeName.get(),
-            'mutationType': self.__mutationType.typeName.get(),
-            'mutationProbability': self.__mutationType.argumentValue.get(),
-            'functionType': self.__functionType.typeName.get(),
-            'functionDimension': self.__functionType.argumentValue.get(),
-            'elitismType': self.__elitismType.typeName.get(),
-            'elitismArgument': self.__elitismType.argumentValue.get(),
-            'useInversion': self.__useInversion.boolean.get(),
-            'inversionProbability': self.__useInversion.argumentValue.get(),
-            'specimenCount': self.__specimenCount.get(),
-            'domainLowerBound': self.__domainLowerBound.get(),
-            'domainUpperBound': self.__domainUpperBound.get(),
-            'epochCount': self.__epochCount.get(),
-            'showChart': self.__showChart.get(),
-            'toMaximize': self.__toMaximize.get()
-        }
+        parameters = GUIParams(
+            self.__crossoverType.typeName.get(),
+            self.__crossoverType.argumentValue.get() if self.__crossoverType.argumentValue.get() != -1 else None,
+            self.__selectionType.typeName.get(),
+            self.__selectionType.argumentValue.get(),
+            self.__selectionOption.typeName.get(),
+            self.__mutationType.typeName.get(),
+            self.__mutationType.argumentValue.get(),
+            self.__functionType.typeName.get(),
+            self.__functionType.argumentValue.get(),
+            self.__elitismType.typeName.get(),
+            self.__elitismType.argumentValue.get(),
+            self.__useInversion.boolean.get(),
+            self.__useInversion.argumentValue.get(),
+            int(self.__specimenCount.get()),
+            (self.__domainLowerBound.get(), self.__domainUpperBound.get()),
+            self.__epochCount.get(),
+            self.__showChart.get(),
+            self.__toMaximize.get(),
+            self.__chromosomePrecision.get()
+        )
         return parameters
 
+    # TODO: implement this function
     def renderPlot(self):
         data = {
             'Python': 11.27,

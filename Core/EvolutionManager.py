@@ -74,7 +74,7 @@ class EvolutionManager:
         :return: EvolutionState
         """
         return EvolutionState(self.__populationSize, self.__currentEpoch, self.__currentPopulation,
-                              self.__selectedPopulation, self.__newPopulation, self.__fitnessFunction)
+                              self.__selectedPopulation, self.__newPopulation, self.__fitnessFunction, self.__epochCount)
 
     def setFirstPopulation(self, population: Collection[Specimen]):
         """

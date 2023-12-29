@@ -41,7 +41,7 @@ class CrossoverGUI(DropdownGUI):
         entry.pack()
 
     def _renderKPointCrossover(self):
-        self._state.argumentValue.set(0)
+        self._state.argumentValue.set(1)
         entry = ttk.Entry(self._innerFrame, textvariable=self._state.argumentValue, width=35)
         label = ttk.Label(self._innerFrame, text="Count of points to cross")
         label.pack()

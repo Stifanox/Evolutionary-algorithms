@@ -1,6 +1,6 @@
 from typing import Tuple
 import math
-from Chromosome import Chromosome
+from Core.Chromosome import Chromosome
 
 
 class ChromosomeFactory:

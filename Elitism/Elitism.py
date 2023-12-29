@@ -1,65 +1,78 @@
-from Core.EvolutionManager import EvolutionManager
 import heapq
+from abc import ABC
+from typing import Collection, List
+from Core.Speciman import Specimen
 
 
-class Elitism:
+class Elitism(ABC):
     """
-    Class that's enable to choose best % or number of specimens from current population and move it to new population
+    Class that's baseline for elitism.
     """
 
-    @staticmethod
-    def selectEliteSpecimensPercent(howManySpecimens: float, maximize: bool,
-                                    evolutionaryManager: EvolutionManager) -> None:
+    def __init__(self, elitismArgument: float, maximize: bool):
+        self._elitismArgument = elitismArgument
+        self._maximize = maximize
+
+    def selectBest(self, currentPopulation: Collection[Specimen]) -> Collection[Specimen]:
+        pass
+
+
+class ElitismByPercent(Elitism):
+    """
+    Enable to choose best % of specimens from current population and move it to new population
+    """
+
+    def __init__(self, elitismArgument: float, maximize: bool):
+        super().__init__(elitismArgument, maximize)
+
+    def selectBest(self, currentPopulation: Collection[Specimen]) -> Collection[Specimen]:
         """
         Selects the percent of current population and moves it to the new population.
 
-        :param howManySpecimens: Percent of current population that will be moved to new population.
-        :param maximize: Whether to look for max or min values.
-        :param evolutionaryManager: Evolutionary manager that keep info about everything.
         :return:None
         """
-        if not 0 <= howManySpecimens <= 1:
+        if not 0 <= self._elitismArgument <= 1:
             raise ValueError(
-                f"The percent of population is lower than 0 or higher than 1. Value given: {howManySpecimens}")
+                f"The percent of population is lower than 0 or higher than 1. Value given: {self._elitismArgument}")
 
-        evolutionState = evolutionaryManager.getEpochSnapshot()
-        currentPopulation = evolutionState.currentPopulation
-        bestSpecimens = []
-        if maximize:
+        bestSpecimens: List[Specimen] = []
+        if self._maximize:
             bestSpecimens.extend(
-                heapq.nlargest(int(evolutionState.populationSize * howManySpecimens), currentPopulation,
+                heapq.nlargest(int(len(currentPopulation) * self._elitismArgument), currentPopulation,
                                lambda x: x.getSpecimenValue()))
         else:
             bestSpecimens.extend(
-                heapq.nsmallest(int(evolutionState.populationSize * howManySpecimens), currentPopulation,
+                heapq.nsmallest(int(len(currentPopulation) * self._elitismArgument), currentPopulation,
                                 lambda x: x.getSpecimenValue()))
 
-        evolutionaryManager.updateNewPopulation(bestSpecimens)
+        return bestSpecimens
 
-    @staticmethod
-    def selectEliteSpecimensCount(howManySpecimens: int, maximize: bool,
-                                  evolutionaryManager: EvolutionManager) -> None:
+
+class ElitismByCount(Elitism):
+    """
+    Enable to choose best number of specimens from current population and move it to new population
+    """
+
+    def __init__(self, elitismArgument: float, maximize: bool):
+        super().__init__(elitismArgument, maximize)
+
+    def selectBest(self, currentPopulation: Collection[Specimen]) -> Collection[Specimen]:
         """
         Selects the number of current population and moves it the to new population.
 
-        :param howManySpecimens: Number of current population that will be moved to new population.
-        :param maximize: Whether to look for max or min values.
-        :param evolutionaryManager: Evolutionary manager that keep info about everything.
         :return:None
         """
-        evolutionState = evolutionaryManager.getEpochSnapshot()
-        if not 0 <= howManySpecimens <= evolutionState.populationSize:
+        if not 0 <= self._elitismArgument <= len(currentPopulation):
             raise ValueError(
                 f"The number of specimen to move to new population is lower than 0 or higher than current population size. "
-                f"Value given: {howManySpecimens}, value expected: in range of 0 to {evolutionState.populationSize}")
+                f"Value given: {self._elitismArgument}, value expected: in range of 0 to {len(currentPopulation)}")
 
-        currentPopulation = evolutionState.currentPopulation
-        bestSpecimens = []
-        if maximize:
+        bestSpecimens: List[Specimen] = []
+        if self._maximize:
             bestSpecimens.extend(
-                heapq.nlargest(howManySpecimens, currentPopulation, lambda x: x.getSpecimenValue()))
+                heapq.nlargest(int(self._elitismArgument), currentPopulation, lambda x: x.getSpecimenValue()))
         else:
             bestSpecimens.extend(
-                heapq.nsmallest(howManySpecimens, currentPopulation, lambda x: x.getSpecimenValue()))
+                heapq.nsmallest(int(self._elitismArgument), currentPopulation, lambda x: x.getSpecimenValue()))
 
-        evolutionaryManager.updateNewPopulation(bestSpecimens)
+        return bestSpecimens

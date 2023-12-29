@@ -7,14 +7,13 @@ class Inversion:
     Class which represents an attempt of inversion occurence on single chromosome.
     """
 
-    def __init__(self, chance: float, chromosome: Chromosome):
+    def __init__(self, chance: float):
         if chance < 0 or chance > 1:
             raise ValueError("Chance of inversion can't go below 0 and over 100 (percent).")
 
         self.__chance = chance
-        self.__chromosome = chromosome
 
-    def inversion(self):
+    def inversion(self, chromosome: Chromosome):
         """
         Try to inverse a part of single chromosome according to the chance given in the constructor.
 
@@ -23,7 +22,7 @@ class Inversion:
         isInversionExecuted = uniform(0, 1)
 
         if isInversionExecuted <= self.__chance:
-            chromosomeLength = self.__chromosome.getChromosomeSize()
+            chromosomeLength = chromosome.getChromosomeSize()
             pointStartRandomIndex = randint(0, chromosomeLength - 1)
             pointEndRandomIndex = randint(0, chromosomeLength - 1)
 
@@ -35,12 +34,12 @@ class Inversion:
                 pointStartRandomIndex = pointEndRandomIndex
                 pointEndRandomIndex = temp
 
-            chromosomeCopy = list(self.__chromosome.getChromosome())
+            chromosomeCopy = list(chromosome.getChromosome())
             chromosomeInversedPart = (chromosomeCopy[pointStartRandomIndex:pointEndRandomIndex + 1])[::-1]
             chromosomeCopy[pointStartRandomIndex:pointEndRandomIndex + 1] = chromosomeInversedPart
 
             updatedChromosome = ''.join(chromosomeCopy)
-            self.__chromosome.updateChromosome(updatedChromosome)
+            chromosome.updateChromosome(updatedChromosome)
 
             return [pointStartRandomIndex, pointEndRandomIndex]
 
