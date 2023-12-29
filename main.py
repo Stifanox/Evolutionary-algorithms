@@ -1,5 +1,6 @@
 from GUI.ApplicationGUI import ApplicationGUI
 from Evolution.EvolutionBuilder import EvolutionBuilder
+from threading import Thread
 
 
 def startEvo(appGUI: ApplicationGUI):
@@ -15,7 +16,7 @@ def startEvo(appGUI: ApplicationGUI):
         .setCrossover(appParams.crossoverType, appParams.crossoverArgument) \
         .buildEvolution(appParams.specimenCount, appParams.epochCount, appParams.chromosomePrecision)
 
-    evolution.startEvolution()
+    Thread(target=evolution.startEvolution, args=[appGUI.renderPlot, appGUI.showResult]).start()
 
 
 if __name__ == '__main__':

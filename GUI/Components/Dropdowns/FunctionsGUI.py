@@ -16,7 +16,7 @@ class FunctionGUI(DropdownGUI):
 
     def _changeFrame(self, var, index, mode):
         super(FunctionGUI, self)._changeFrame(var, index, mode)
-        self._state.argumentValue.set(1)
+        self._state.argumentValue.set(2)
         label = ttk.Label(self._innerFrame, text=f"Dimension of function {self._state.typeName.get()}")
         label.pack()
 

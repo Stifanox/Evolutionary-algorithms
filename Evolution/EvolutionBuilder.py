@@ -11,7 +11,6 @@ from Elitism.Elitism import Elitism, ElitismByPercent, ElitismByCount
 from Core.EvolutionManager import EvolutionManager
 from Evolution.Evolution import Evolution
 
-
 class EvolutionBuilder:
 
     def __init__(self, GUIParameters: GUIParams):

@@ -1,3 +1,5 @@
+import time
+
 from Core.EvolutionManager import EvolutionManager
 from Selection.Selection import Selection
 from Crossover.CrossoverTypes import CrossoverType
@@ -5,13 +7,15 @@ from Elitism.Elitism import Elitism
 from Mutation.Inversion import Inversion
 from Mutation.Mutation import Mutation
 from Plot.Plot import Plot, PlotLayout
-from FileExport.FileExport import FileExport
+from FileExport.FileExport import FileExport, FileExportVariant
 from Core.Utils import initRandomPopulation
 from Core.FitnessFunction import FitnessFunction
 import random
+from typing import Callable
+from matplotlib.figure import Figure
 
 
-# TODO: check once more if all here is okay
+# TODO: implement selection for maximize
 class Evolution:
 
     def __init__(self, evoManager: EvolutionManager,
@@ -40,11 +44,18 @@ class Evolution:
 
         self.__timeOfEvolution = 0
 
-    def startEvolution(self):
+    def startEvolution(self, renderPlot: Callable[[Figure], None], showResult: Callable[[float], None]):
         # Init 1st population
+        startTime = time.time()
         initPopulation = initRandomPopulation(self.__evoManager.getEpochSnapshot().populationSize,
                                               self.__chromosomePrecision, self.__fitnessFunction)
         self.__evoManager.setFirstPopulation(initPopulation)
+
+        # Show chart
+        if self.__showChart:
+            self.__plot.refreshData()
+            self.__plot.redraw()
+            renderPlot(self.__plot.getFigure())
         # For epoch count
         for i in range(self.__evoManager.getEpochSnapshot().epochCount):
             # Evaluation
@@ -91,12 +102,27 @@ class Evolution:
                             chromosome.updateChromosome(newChromosome)
 
             # Go to next epoch
-            print("Best specimen in population: ", end="")
-            if self.__maximize:
-                print(max(self.__evoManager.getEpochSnapshot().newPopulation,
-                          key=lambda x: x.getSpecimenValue()).getSpecimenValue())
-            else:
-                print(min(self.__evoManager.getEpochSnapshot().newPopulation,
-                          key=lambda x: x.getSpecimenValue()).getSpecimenValue())
+            # print("Best specimen in population: ", end="")
+            # if self.__maximize:
+            #     print(max(self.__evoManager.getEpochSnapshot().newPopulation,
+            #               key=lambda x: x.getSpecimenValue()).getSpecimenValue())
+            # else:
+            #     print(min(self.__evoManager.getEpochSnapshot().newPopulation,
+            #               key=lambda x: x.getSpecimenValue()).getSpecimenValue())
+
+            if (i % (
+                    self.__evoManager.getEpochSnapshot().epochCount * 0.1) == 0 or i == self.__evoManager.getEpochSnapshot().epochCount - 1) and self.__showChart:
+                self.__plot.refreshData()
+                self.__plot.redraw()
+                renderPlot(self.__plot.getFigure())
+                # FIXME: do it some better way
+                time.sleep(0.2)
+
+            self.__saveToFile.export(FileExportVariant.Best, self.__maximize)
+            self.__saveToFile.export(FileExportVariant.Average, self.__maximize)
+            self.__saveToFile.export(FileExportVariant.StandardDeviation, self.__maximize)
 
             self.__evoManager.updateEpoch()
+        endTime = time.time()
+
+        showResult(endTime - startTime)

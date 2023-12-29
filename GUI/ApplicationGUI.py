@@ -74,7 +74,7 @@ class ApplicationGUI(Tk):
         EpochCountGUI(self.__epochCount, self.__leftFrame, "Count of epochs")
         SelectionNumOrPercentGUI(self.__selectionType, self.__leftFrame, numOrPercentOptions)
         SelectionTypeGUI(self.__selectionOption, self.__leftFrame, selectionOptions)
-        ShowChartGUI(self.__showChart, self.__leftFrame, "Show chart")
+        ShowChartGUI(self.__showChart, self.__leftFrame, "Show chart (will slow down simulation)")
         ttk.Button(self.__leftFrame, command=self.__startEvolutionFunc, text="Start evolution").pack()
 
     def getParameters(self):
@@ -101,26 +101,14 @@ class ApplicationGUI(Tk):
         )
         return parameters
 
-    # TODO: implement this function
-    def renderPlot(self):
-        data = {
-            'Python': 11.27,
-            'C': 11.16,
-            'Java': 10.46,
-            'C++': 7.5,
-            'C#': 5.26
-        }
-        languages = data.keys()
-        popularity = data.values()
-        figure = Figure(figsize=(5, 5), dpi=100)
-
+    def renderPlot(self, figure: Figure):
         # create FigureCanvasTkAgg object
+        self.geometry("1000x1000")
         figure_canvas = FigureCanvasTkAgg(figure, self)
-
-        # create axes
-        axes = figure.add_subplot()
-
-        # create the barchart
-        axes.bar(languages, popularity)
-
         figure_canvas.get_tk_widget().grid(row=0, column=1, padx=(50, 0), pady=(50, 0))
+
+    def showResult(self,time:float):
+        newWindow = Toplevel(self)
+        newWindow.geometry("300x100")
+        ttk.Label(newWindow, text=f"Time of simulation = {time}").pack()
+
