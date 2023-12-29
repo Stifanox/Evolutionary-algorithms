@@ -74,7 +74,7 @@ class ApplicationGUI(Tk):
         EpochCountGUI(self.__epochCount, self.__leftFrame, "Count of epochs")
         SelectionNumOrPercentGUI(self.__selectionType, self.__leftFrame, numOrPercentOptions)
         SelectionTypeGUI(self.__selectionOption, self.__leftFrame, selectionOptions)
-        ShowChartGUI(self.__showChart, self.__leftFrame, "Show chart (will slow down simulation)")
+        ShowChartGUI(self.__showChart, self.__leftFrame, "Show chart")
         ttk.Button(self.__leftFrame, command=self.__startEvolutionFunc, text="Start evolution").pack()
 
     def getParameters(self):
@@ -101,11 +101,13 @@ class ApplicationGUI(Tk):
         )
         return parameters
 
-    def renderPlot(self, figure: Figure):
-        # create FigureCanvasTkAgg object
-        self.geometry("1000x1000")
-        figure_canvas = FigureCanvasTkAgg(figure, self)
-        figure_canvas.get_tk_widget().grid(row=0, column=1, padx=(50, 0), pady=(50, 0))
+    def renderPlot(self, setup: bool, figure: Figure):
+        if setup:
+            self.geometry("1000x1000")
+            self.figure_canvas = FigureCanvasTkAgg(figure, self) # create FigureCanvasTkAgg object
+            self.figure_canvas.get_tk_widget().grid(row=0, column=1, padx=(50, 0), pady=(50, 0))
+        else:
+            self.figure_canvas.draw()
 
     def showResult(self,time:float):
         newWindow = Toplevel(self)
