@@ -44,9 +44,10 @@ class Evolution:
 
         self.__timeOfEvolution = 0
 
-    def startEvolution(self, renderPlot: Callable[[Figure], None], showResult: Callable[[float], None]):
+    def startEvolution(self, renderPlot: Callable[[bool, Figure], None], showResult: Callable[[float], None]):
         # Init 1st population
         startTime = time.time()
+        prevTime = startTime
         initPopulation = initRandomPopulation(self.__evoManager.getEpochSnapshot().populationSize,
                                               self.__chromosomePrecision, self.__fitnessFunction)
         self.__evoManager.setFirstPopulation(initPopulation)
@@ -55,7 +56,7 @@ class Evolution:
         if self.__showChart:
             self.__plot.refreshData()
             self.__plot.redraw()
-            renderPlot(self.__plot.getFigure())
+            renderPlot(True, self.__plot.getFigure())
         # For epoch count
         for i in range(self.__evoManager.getEpochSnapshot().epochCount):
             # Evaluation
@@ -110,19 +111,23 @@ class Evolution:
             #     print(min(self.__evoManager.getEpochSnapshot().newPopulation,
             #               key=lambda x: x.getSpecimenValue()).getSpecimenValue())
 
-            if (i % (
-                    self.__evoManager.getEpochSnapshot().epochCount * 0.1) == 0 or i == self.__evoManager.getEpochSnapshot().epochCount - 1) and self.__showChart:
-                self.__plot.refreshData()
+            self.__plot.refreshData()
+            crrTime = time.time()
+
+            if crrTime - prevTime > 0.3: # refresh period (in seconds)
+                prevTime = crrTime
                 self.__plot.redraw()
-                renderPlot(self.__plot.getFigure())
-                # FIXME: do it some better way
-                time.sleep(0.2)
+                renderPlot(False, self.__plot.getFigure())
 
             self.__saveToFile.export(FileExportVariant.Best, self.__maximize)
             self.__saveToFile.export(FileExportVariant.Average, self.__maximize)
             self.__saveToFile.export(FileExportVariant.StandardDeviation, self.__maximize)
 
             self.__evoManager.updateEpoch()
-        endTime = time.time()
 
+        self.__plot.refreshData()
+        self.__plot.redraw()
+
+        renderPlot(False, self.__plot.getFigure())
+        endTime = time.time()
         showResult(endTime - startTime)
