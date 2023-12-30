@@ -114,7 +114,7 @@ class Evolution:
             self.__plot.refreshData()
             crrTime = time.time()
 
-            if crrTime - prevTime > 0.3: # refresh period (in seconds)
+            if crrTime - prevTime > 0.3 and self.__showChart: # refresh period (in seconds)
                 prevTime = crrTime
                 self.__plot.redraw()
                 renderPlot(False, self.__plot.getFigure())
@@ -125,9 +125,10 @@ class Evolution:
 
             self.__evoManager.updateEpoch()
 
-        self.__plot.refreshData()
-        self.__plot.redraw()
+        if self.__showChart:
+            self.__plot.refreshData()
+            self.__plot.redraw()
+            renderPlot(False, self.__plot.getFigure())
 
-        renderPlot(False, self.__plot.getFigure())
         endTime = time.time()
         showResult(endTime - startTime)
