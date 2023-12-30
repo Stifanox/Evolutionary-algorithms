@@ -16,9 +16,15 @@ def startEvo(appGUI: ApplicationGUI):
         .setCrossover(appParams.crossoverType, appParams.crossoverArgument) \
         .buildEvolution(appParams.specimenCount, appParams.epochCount, appParams.chromosomePrecision)
 
-    Thread(target=evolution.startEvolution, args=[appGUI.renderPlot, appGUI.showResult]).start()
+    Thread(target=evolution.startEvolution, args=[appGUI.renderPlot, appGUI.showResult], daemon=True).start()
+
+
+def quitProgram(appGUI: ApplicationGUI):
+    appGUI.quit()
+    appGUI.destroy()
 
 
 if __name__ == '__main__':
     app = ApplicationGUI(lambda: startEvo(app))
+    app.protocol("WM_DELETE_WINDOW", lambda: quitProgram(app))
     app.mainloop()
