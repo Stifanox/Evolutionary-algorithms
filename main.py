@@ -7,7 +7,7 @@ def startEvo(appGUI: ApplicationGUI):
     appParams = appGUI.getParameters()
     evolution = EvolutionBuilder(appParams) \
         .setSelection(appParams.selectionType, appParams.selectionNumOrPercent,
-                      appParams.selectionArgument) \
+                      appParams.selectionArgument,appParams.toMaximize) \
         .setElitism(appParams.elitismType, appParams.elitismArgument, appParams.toMaximize) \
         .setInverse(appParams.useInversion, appParams.inversionProbability) \
         .setMutation(appParams.mutationType, appParams.mutationProbability) \

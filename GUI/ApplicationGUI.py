@@ -1,5 +1,7 @@
 from tkinter import *
 from tkinter import ttk
+
+import benchmark_functions
 import matplotlib
 from GUI.Components.Dropdowns.CrossoverGUI import CrossoverGUI
 from GUI.Components.Dropdowns.MutationGUI import MutationGUI
@@ -25,8 +27,8 @@ from GUI.GUIParams import GUIParams
 mutationOptions = ["TwoPointMutation", "SinglePointMutation", "EdgeMutation"]
 crossoverOptions = ["KPointCrossover", "ShuffleCrossover", "DiscreteCrossover", "UniformCrossover"]
 functionOptions = ["Hypersphere", "Hyperellipsoid", "Schwefel", "Ackley", "Michalewicz", "Rastrigin", "Rosenbrock",
-                   "De Jong 3", "De Jong 5", "Martin And Gaddy", "Griewank", "Easom", "Goldstein and Price",
-                   "Picheny, Goldstein And Price", "Styblinski And Tang", "Mc Cormick", "Rana", "Egg Holder", "Keane",
+                   "De Jong 3", "De Jong 5", "Martin And Gaddy", "Griewank", "Easom", "Goldstein And Price",
+                   "Picheny Goldstein And Price", "Styblinski And Tang", "Mc Cormick", "Rana", "Egg Holder", "Keane",
                    "Schaffer 2", "Himmelblau", "Pits And Holes"]
 numOrPercentOptions = ["Number", "Percent"]
 selectionOptions = ["Top", "Roulette", "Tournament"]
@@ -104,13 +106,13 @@ class ApplicationGUI(Tk):
     def renderPlot(self, setup: bool, figure: Figure):
         if setup:
             self.geometry("1000x1000")
-            self.figure_canvas = FigureCanvasTkAgg(figure, self) # create FigureCanvasTkAgg object
+            self.figure_canvas = FigureCanvasTkAgg(figure, self)  # create FigureCanvasTkAgg object
             self.figure_canvas.get_tk_widget().grid(row=0, column=1, padx=(50, 0), pady=(50, 0))
         else:
             self.figure_canvas.draw()
 
-    def showResult(self,time:float):
+    def showResult(self, time: float, bestVal: float):
+
         newWindow = Toplevel(self)
         newWindow.geometry("300x100")
-        ttk.Label(newWindow, text=f"Time of simulation = {time}").pack()
-
+        ttk.Label(newWindow, text=f"Time of simulation = {time}\nBest specimen has value of = {bestVal}").pack()

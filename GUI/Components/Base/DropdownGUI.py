@@ -5,7 +5,6 @@ from typing import List
 from GUI.VariablesGUI import DropdownVariable
 
 
-# TODO: later instead of packing use grid system
 class DropdownGUI(ABC):
 
     def __init__(self, state: DropdownVariable, root: Frame, options: List[str]):

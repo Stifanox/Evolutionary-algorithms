@@ -1,3 +1,5 @@
+import benchmark_functions
+
 from Mutation.Mutation import Mutation
 from Mutation.Inversion import Inversion
 from Crossover.CrossoverTypes import CrossoverType
@@ -10,6 +12,7 @@ from Crossover.CrossoverTypes import KPointCrossover, ShuffleCrossover, Discrete
 from Elitism.Elitism import Elitism, ElitismByPercent, ElitismByCount
 from Core.EvolutionManager import EvolutionManager
 from Evolution.Evolution import Evolution
+
 
 class EvolutionBuilder:
 
@@ -26,7 +29,8 @@ class EvolutionBuilder:
         self.__GUIParams = GUIParameters
         self.__setFitnessFunction()
 
-    def setSelection(self, selectionType: str, selectionByNumberOrPercent: str, selectionSpecimenCount: int):
+    def setSelection(self, selectionType: str, selectionByNumberOrPercent: str, selectionSpecimenCount: int,
+                     toMaximize: bool):
         selectionTypeConverted = 0
         match selectionType:
             case "Top":
@@ -44,8 +48,16 @@ class EvolutionBuilder:
             case "Percent":
                 selectionByNumberOrPercentConverted = Selection.LimitType_Percentage
 
+        toMaximizeArg = Selection.EvalMethod_Maximum
+
+        match toMaximize:
+            case False:
+                toMaximizeArg = Selection.EvalMethod_Minimum
+            case True:
+                toMaximizeArg = Selection.EvalMethod_Maximum
+
         self.__selection = Selection(self.__fitnessFunction, selectionTypeConverted,
-                                     selectionByNumberOrPercentConverted, selectionSpecimenCount)
+                                     selectionByNumberOrPercentConverted, selectionSpecimenCount, toMaximizeArg)
         return self
 
     def setMutation(self, mutationType: str, mutationArgument: float):
@@ -105,8 +117,14 @@ class EvolutionBuilder:
         return evolution
 
     def __setFitnessFunction(self):
+        benchmarkFunc = benchmark_functions.Hypersphere()
+        if self.__GUIParams.functionType in ["Martin And Gaddy","Styblinski And Tang"]:
+            benchmarkFunc = getattr(bf, self.__GUIParams.functionType.replace(" ", "").replace("And", ""))(
+                int(self.__GUIParams.functionDimension))
+        else:
+            benchmarkFunc = getattr(bf, self.__GUIParams.functionType.replace(" ", ""))(
+                int(self.__GUIParams.functionDimension))
 
-        benchmarkFunc = getattr(bf, self.__GUIParams.functionType.replace(" ", "").replace("And", ""))(int(self.__GUIParams.functionDimension))
         self.__fitnessFunction = FitnessFunction(int(self.__GUIParams.functionDimension),
                                                  tuple([self.__GUIParams.domainBound] * int(
                                                      self.__GUIParams.functionDimension)),

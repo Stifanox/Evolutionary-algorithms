@@ -15,7 +15,6 @@ from typing import Callable
 from matplotlib.figure import Figure
 
 
-# TODO: implement selection for maximize
 class Evolution:
 
     def __init__(self, evoManager: EvolutionManager,
@@ -44,7 +43,7 @@ class Evolution:
 
         self.__timeOfEvolution = 0
 
-    def startEvolution(self, renderPlot: Callable[[bool, Figure], None], showResult: Callable[[float], None]):
+    def startEvolution(self, renderPlot: Callable[[bool, Figure], None], showResult: Callable[[float, float], None]):
         # Init 1st population
         startTime = time.time()
         prevTime = startTime
@@ -103,18 +102,18 @@ class Evolution:
                             chromosome.updateChromosome(newChromosome)
 
             # Go to next epoch
-            # print("Best specimen in population: ", end="")
-            # if self.__maximize:
-            #     print(max(self.__evoManager.getEpochSnapshot().newPopulation,
-            #               key=lambda x: x.getSpecimenValue()).getSpecimenValue())
-            # else:
-            #     print(min(self.__evoManager.getEpochSnapshot().newPopulation,
-            #               key=lambda x: x.getSpecimenValue()).getSpecimenValue())
+            print("Best specimen in population: ", end="")
+            if self.__maximize:
+                print(max(self.__evoManager.getEpochSnapshot().newPopulation,
+                          key=lambda x: x.getSpecimenValue()).getSpecimenValue())
+            else:
+                print(min(self.__evoManager.getEpochSnapshot().newPopulation,
+                          key=lambda x: x.getSpecimenValue()).getSpecimenValue())
 
             self.__plot.refreshData()
             crrTime = time.time()
 
-            if crrTime - prevTime > 0.3 and self.__showChart: # refresh period (in seconds)
+            if crrTime - prevTime > 0.3 and self.__showChart:  # refresh period (in seconds)
                 prevTime = crrTime
                 self.__plot.redraw()
                 renderPlot(False, self.__plot.getFigure())
@@ -131,4 +130,11 @@ class Evolution:
             renderPlot(False, self.__plot.getFigure())
 
         endTime = time.time()
-        showResult(endTime - startTime)
+        if self.__maximize:
+            best = max(self.__evoManager.getEpochSnapshot().currentPopulation,
+                       key=lambda x: x.getSpecimenValue()).getSpecimenValue()
+            showResult(endTime - startTime, best)
+        else:
+            best = min(self.__evoManager.getEpochSnapshot().currentPopulation,
+                       key=lambda x: x.getSpecimenValue()).getSpecimenValue()
+            showResult(endTime - startTime, best)
