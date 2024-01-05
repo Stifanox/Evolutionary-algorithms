@@ -1,7 +1,7 @@
 from typing import *
 
 from Core.FitnessFunction import FitnessFunction
-from Core.Speciman import Specimen
+from Core.Specimen import Specimen
 from Core.EvolutionState import EvolutionState
 
 

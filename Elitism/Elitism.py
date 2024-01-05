@@ -1,7 +1,7 @@
 import heapq
 from abc import ABC
 from typing import Collection, List
-from Core.Speciman import Specimen
+from Core.Specimen import Specimen
 
 
 class Elitism(ABC):

@@ -28,7 +28,7 @@ class Specimen:
     @multimethod.overload
     def updateChromosomes(self, chromosomes: Collection[Chromosome]) -> None:
         """
-        "Replace all chromosomes in specimen. If provided list length is not equal to dimension of function, this function will throw error.
+        Replace all chromosomes in specimen. If provided list length is not equal to dimension of function, this function will throw error.
 
         :param chromosomes: List of new chromosomes
         :return:None

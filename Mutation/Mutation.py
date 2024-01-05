@@ -1,4 +1,4 @@
-from Core.Chromosome import Chromosome
+from Core.BinaryRepresentation.ChromosomeBinary import ChromosomeBinary
 from random import uniform, randint
 from abc import ABC
 
@@ -14,7 +14,7 @@ class Mutation(ABC):
 
         self.__chance = chance
 
-    def mutate(self, chromosome: Chromosome):
+    def mutate(self, chromosome: ChromosomeBinary):
         """
         Try to mutate a single chromosome according to the chance given in the constructor.
 
@@ -28,7 +28,7 @@ class Mutation(ABC):
         else:
             return "Mutation did not occur"
 
-    def performMutation(self, chromosome: Chromosome):
+    def performMutation(self, chromosome: ChromosomeBinary):
         """
         Placeholder method for performing the actual mutation.
         To be implemented by subclasses.
@@ -45,10 +45,10 @@ class EdgeMutation(Mutation):
         super().__init__(chance)
         self._Mutation__chance = chance
 
-    def performMutation(self, chromosome: Chromosome):
+    def performMutation(self, chromosome: ChromosomeBinary):
         leftOrRight = randint(1, 2)
 
-        chromosomeCopy = list(chromosome.getChromosome())
+        chromosomeCopy = list(chromosome.getChromosomeBinaryValue())
 
         if leftOrRight == 1:
             chromosomeCopy[0] = '1' if chromosomeCopy[0] == '0' else '0'
@@ -68,11 +68,11 @@ class SinglePointMutation(Mutation):
         super().__init__(chance)
         self._Mutation__chance = chance
 
-    def performMutation(self, chromosome: Chromosome):
+    def performMutation(self, chromosome: ChromosomeBinary):
         chromosomeLength = chromosome.getChromosomeSize()
         pointRandomIndex = randint(1, chromosomeLength - 2)
 
-        chromosomeCopy = list(chromosome.getChromosome())
+        chromosomeCopy = list(chromosome.getChromosomeBinaryValue())
 
         chromosomeCopy[pointRandomIndex] = '1' if chromosomeCopy[pointRandomIndex] == '0' else '0'
 
@@ -89,7 +89,7 @@ class TwoPointMutation(Mutation):
         super().__init__(chance)
         self._Mutation__chance = chance
 
-    def performMutation(self, chromosome: Chromosome):
+    def performMutation(self, chromosome: ChromosomeBinary):
         chromosomeLength = chromosome.getChromosomeSize()
         pointFirstRandomIndex = randint(1, chromosomeLength - 2)
         pointSecondRandomIndex = randint(1, chromosomeLength - 2)
@@ -97,7 +97,7 @@ class TwoPointMutation(Mutation):
         while pointFirstRandomIndex == pointSecondRandomIndex:
             pointSecondRandomIndex = randint(1, chromosomeLength - 2)
 
-        chromosomeCopy = list(chromosome.getChromosome())
+        chromosomeCopy = list(chromosome.getChromosomeBinaryValue())
 
         chromosomeCopy[pointFirstRandomIndex] = '1' if chromosomeCopy[pointFirstRandomIndex] == '0' else '0'
         chromosomeCopy[pointSecondRandomIndex] = '1' if chromosomeCopy[pointSecondRandomIndex] == '0' else '0'

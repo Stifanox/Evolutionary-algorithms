@@ -8,11 +8,12 @@ from Mutation.Inversion import Inversion
 from Mutation.Mutation import Mutation
 from Plot.Plot import Plot, PlotLayout
 from FileExport.FileExport import FileExport, FileExportVariant
-from Core.Utils import initRandomPopulation
+from Core.Utils import initRandomBinaryPopulation
 from Core.FitnessFunction import FitnessFunction
 import random
-from typing import Callable
+from typing import Callable, Collection
 from matplotlib.figure import Figure
+from Core.BinaryRepresentation.ChromosomeBinary import ChromosomeBinary
 
 
 class Evolution:
@@ -43,12 +44,13 @@ class Evolution:
 
         self.__timeOfEvolution = 0
 
-    def startEvolution(self, renderPlot: Callable[[bool, Figure], None], showResult: Callable[[float, float], None]):
+    def startEvolution(self, renderPlot: Callable[[bool, Figure], None],
+                       showResult: Callable[[float, float, Collection[ChromosomeBinary]], None]):
         # Init 1st population
         startTime = time.time()
         prevTime = startTime
-        initPopulation = initRandomPopulation(self.__evoManager.getEpochSnapshot().populationSize,
-                                              self.__chromosomePrecision, self.__fitnessFunction)
+        initPopulation = initRandomBinaryPopulation(self.__evoManager.getEpochSnapshot().populationSize,
+                                                    self.__chromosomePrecision, self.__fitnessFunction)
         self.__evoManager.setFirstPopulation(initPopulation)
 
         # Show chart
@@ -96,7 +98,7 @@ class Evolution:
                         startEndPositionsToInverse = self.__inverse.inversion(chromosome)
                         if not isinstance(startEndPositionsToInverse, str):
                             (start, end) = startEndPositionsToInverse
-                            oldChromo = chromosome.getChromosome()
+                            oldChromo = chromosome.getChromosomeBinaryValue()
                             newChromosome = oldChromo[0:start] + oldChromo[end:max(start - 1, 0):-1] + oldChromo[
                                                                                                        end + 1 if start != 0 else end:]
                             chromosome.updateChromosome(newChromosome)
@@ -133,8 +135,12 @@ class Evolution:
         if self.__maximize:
             best = max(self.__evoManager.getEpochSnapshot().currentPopulation,
                        key=lambda x: x.getSpecimenValue()).getSpecimenValue()
-            showResult(endTime - startTime, best)
+            bestSpecimen = sorted(self.__evoManager.getEpochSnapshot().currentPopulation, reverse=True,
+                                  key=lambda x: x.getSpecimenValue())[0]
+            showResult(endTime - startTime, best, bestSpecimen.getChromosomes())
         else:
             best = min(self.__evoManager.getEpochSnapshot().currentPopulation,
                        key=lambda x: x.getSpecimenValue()).getSpecimenValue()
-            showResult(endTime - startTime, best)
+            bestSpecimen = sorted(self.__evoManager.getEpochSnapshot().currentPopulation,
+                                  key=lambda x: x.getSpecimenValue())[0]
+            showResult(endTime - startTime, best, bestSpecimen.getChromosomes())

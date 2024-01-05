@@ -1,5 +1,5 @@
 from typing import *
-from Core.Speciman import Specimen
+from Core.Specimen import Specimen
 
 
 class FitnessFunction:
@@ -24,7 +24,7 @@ class FitnessFunction:
         :return: Value of calculated function for given specimen
         :rtype: float
         """
-        listOfChromosomesValue = [x.getChromosomeNumericValue() for x in specimen.getChromosomes()]
+        listOfChromosomesValue = [x.getChromosome() for x in specimen.getChromosomes()]
         return self.__fitnessFunction(listOfChromosomesValue)
 
     def getFunctionDimension(self) -> int:

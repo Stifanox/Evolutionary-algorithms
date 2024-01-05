@@ -1,12 +1,12 @@
 from typing import Tuple
 import math
-from Core.Chromosome import Chromosome
+from Core.BinaryRepresentation.ChromosomeBinary import ChromosomeBinary
 
 
-class ChromosomeFactory:
+class ChromosomeBinaryFactory:
 
     @staticmethod
-    def fromFloat(chromosome: float, chromosomePrecision: int, functionDomain: Tuple[float, float]) -> Chromosome:
+    def fromFloat(chromosome: float, chromosomePrecision: int, functionDomain: Tuple[float, float]) -> ChromosomeBinary:
         """
         Create chromosome from number
         :param chromosome: Number from which we want to create chromosome
@@ -19,14 +19,14 @@ class ChromosomeFactory:
                 f"Chromosome is out of function domain. Domain: ({functionDomain[0]},{functionDomain[1]}). "
                 f"Your value: {chromosome}")
 
-        chromosomeSize = ChromosomeFactory.__calculateChromosomeSize(chromosomePrecision, functionDomain)
-        chromosomeString = ChromosomeFactory.__convertNumberToChromosome(chromosome, functionDomain, chromosomeSize)
+        chromosomeSize = ChromosomeBinaryFactory.__calculateChromosomeSize(chromosomePrecision, functionDomain)
+        chromosomeString = ChromosomeBinaryFactory.__convertNumberToChromosome(chromosome, functionDomain, chromosomeSize)
         chromosomeString = chromosomeString[2:]
 
-        return Chromosome(chromosomeString, chromosomePrecision, functionDomain)
+        return ChromosomeBinary(chromosomeString, chromosomePrecision, functionDomain)
 
     @staticmethod
-    def fromString(chromosome: str, chromosomePrecision: int, functionDomain: Tuple[float, float]) -> Chromosome:
+    def fromString(chromosome: str, chromosomePrecision: int, functionDomain: Tuple[float, float]) -> ChromosomeBinary:
         """
         Create chromosome from string
         :param chromosome: String to create chromosome
@@ -34,7 +34,7 @@ class ChromosomeFactory:
         :param functionDomain: Domain of function
         :return: Chromosome instance
         """
-        return Chromosome(chromosome, chromosomePrecision, functionDomain)
+        return ChromosomeBinary(chromosome, chromosomePrecision, functionDomain)
 
     @staticmethod
     def __convertNumberToChromosome(number: float, functionDomain: Tuple[float, float], chromosomeSize: int) -> str:

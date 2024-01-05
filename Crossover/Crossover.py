@@ -1,6 +1,6 @@
 from Crossover.CrossoverTypes import *
 
-def runCrossover(parents: Collection[Specimen], crossoverType : CrossoverType, targetSize : int) -> Tuple[Specimen, ...]:
+def runCrossover(parents: Collection[SpecimenBinary], crossoverType : CrossoverType, targetSize : int) -> Tuple[SpecimenBinary, ...]:
     """
     Creates a new population (children) from selected population (parents).
     It picks randomly parents and applies crossover, until target size is reached.

@@ -2,15 +2,15 @@ import random
 from abc import ABC
 from typing import *
 from copy import deepcopy
-from Core.Speciman import Specimen
-from Core.Chromosome import Chromosome
+from Core.BinaryRepresentation.SpecimenBinary import SpecimenBinary
+
 
 class CrossoverType(ABC):
     """
     Classes inheriting from this class represent a single method of crossover.
     """
 
-    def mix(self, a : Specimen, b : Specimen) -> Tuple[Specimen, Specimen]:
+    def mix(self, a : SpecimenBinary, b : SpecimenBinary) -> Tuple[SpecimenBinary, SpecimenBinary]:
         pass
 
 
@@ -27,7 +27,7 @@ class KPointCrossover(CrossoverType):
             raise ValueError("pointCount must be positive integer")
         self.pointCount = pointCount
 
-    def mix(self, a : Specimen, b : Specimen) -> Tuple[Specimen, Specimen]:
+    def mix(self, a : SpecimenBinary, b : SpecimenBinary) -> Tuple[SpecimenBinary, SpecimenBinary]:
         """
         Generates two children from two parents.
 
@@ -46,8 +46,8 @@ class KPointCrossover(CrossoverType):
         copyB = deepcopy(b)
 
         for i in range(chromosomeCount):
-            chA = setA[i].getChromosome()
-            chB = setB[i].getChromosome()
+            chA = setA[i].getChromosomeBinaryValue()
+            chB = setB[i].getChromosomeBinaryValue()
 
             chromosomeSize = len(chA)
             if chromosomeSize != len(chB):
@@ -92,7 +92,7 @@ class ShuffleCrossover(CrossoverType):
     def __init__(self):
         pass
 
-    def mix(self, a : Specimen, b : Specimen) -> Tuple[Specimen, Specimen]:
+    def mix(self, a : SpecimenBinary, b : SpecimenBinary) -> Tuple[SpecimenBinary, SpecimenBinary]:
         """
         Generates two children from two parents.
 
@@ -111,8 +111,8 @@ class ShuffleCrossover(CrossoverType):
         copyB = deepcopy(b)
 
         for i in range(chromosomeCount):
-            chA = list(setA[i].getChromosome())
-            chB = list(setB[i].getChromosome())
+            chA = list(setA[i].getChromosomeBinaryValue())
+            chB = list(setB[i].getChromosomeBinaryValue())
 
             chromosomeSize = len(chA)
             if chromosomeSize != len(chB):
@@ -150,7 +150,7 @@ class DiscreteCrossover(CrossoverType):
             raise ValueError("threshold must be within [0, 1]")
         self.threshold = threshold
 
-    def mix(self, a : Specimen, b : Specimen) -> Tuple[Specimen, Specimen]:
+    def mix(self, a : SpecimenBinary, b : SpecimenBinary) -> Tuple[SpecimenBinary, SpecimenBinary]:
         """
         Generates two children from two parents.
 
@@ -169,8 +169,8 @@ class DiscreteCrossover(CrossoverType):
         copyB = deepcopy(b)
 
         for i in range(chromosomeCount):
-            chA = setA[i].getChromosome()
-            chB = setB[i].getChromosome()
+            chA = setA[i].getChromosomeBinaryValue()
+            chB = setB[i].getChromosomeBinaryValue()
 
             chromosomeSize = len(chA)
             if chromosomeSize != len(chB):
@@ -200,7 +200,7 @@ class UniformCrossover(CrossoverType):
     def __init__(self):
         pass
 
-    def mix(self, a : Specimen, b : Specimen) -> Tuple[Specimen, Specimen]:
+    def mix(self, a : SpecimenBinary, b : SpecimenBinary) -> Tuple[SpecimenBinary, SpecimenBinary]:
         """
         Generates two children from two parents.
 

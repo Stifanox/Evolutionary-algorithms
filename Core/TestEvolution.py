@@ -1,7 +1,7 @@
 import benchmark_functions as bf
 from Core.FitnessFunction import FitnessFunction
 from Core.EvolutionManager import EvolutionManager
-from Core.Utils import initRandomPopulation
+from Core.Utils import initRandomBinaryPopulation
 
 
 # TODO: implement this test function for others
@@ -22,7 +22,7 @@ def test():
     evolutionaryManager = EvolutionManager(100, 100, fitnessFunction)
 
     # Set first population (random). If you call this method again later, the current population will be overriden
-    evolutionaryManager.setFirstPopulation(initRandomPopulation(100, 6, fitnessFunction))
+    evolutionaryManager.setFirstPopulation(initRandomBinaryPopulation(100, 6, fitnessFunction))
 
     # Snapshot is the current state
     # Even tho the snapshot is new object if you modify the insides of population i.e. change chromosome value,

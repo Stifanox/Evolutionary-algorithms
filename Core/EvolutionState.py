@@ -1,6 +1,6 @@
 import json
 from typing import *
-from Core.Speciman import Specimen
+from Core.Specimen import Specimen
 from Core.FitnessFunction import FitnessFunction
 
 

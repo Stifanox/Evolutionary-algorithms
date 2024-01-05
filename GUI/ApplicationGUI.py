@@ -111,8 +111,10 @@ class ApplicationGUI(Tk):
         else:
             self.figure_canvas.draw()
 
-    def showResult(self, time: float, bestVal: float):
+    def showResult(self, time: float, bestVal: float, argumentsForFunction):
 
         newWindow = Toplevel(self)
         newWindow.geometry("300x100")
         ttk.Label(newWindow, text=f"Time of simulation = {time}\nBest specimen has value of = {bestVal}").pack()
+        for index, chromosome in enumerate(argumentsForFunction):
+            ttk.Label(newWindow, text=f"Argument {index} is {chromosome.getChromosome()}").pack()

@@ -1,4 +1,4 @@
-from Core.Chromosome import Chromosome
+from Core.BinaryRepresentation.ChromosomeBinary import ChromosomeBinary
 from random import uniform, randint
 
 
@@ -13,7 +13,7 @@ class Inversion:
 
         self.__chance = chance
 
-    def inversion(self, chromosome: Chromosome):
+    def inversion(self, chromosome: ChromosomeBinary):
         """
         Try to inverse a part of single chromosome according to the chance given in the constructor.
 
@@ -34,7 +34,7 @@ class Inversion:
                 pointStartRandomIndex = pointEndRandomIndex
                 pointEndRandomIndex = temp
 
-            chromosomeCopy = list(chromosome.getChromosome())
+            chromosomeCopy = list(chromosome.getChromosomeBinaryValue())
             chromosomeInversedPart = (chromosomeCopy[pointStartRandomIndex:pointEndRandomIndex + 1])[::-1]
             chromosomeCopy[pointStartRandomIndex:pointEndRandomIndex + 1] = chromosomeInversedPart
 

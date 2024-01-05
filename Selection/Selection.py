@@ -1,8 +1,7 @@
 from typing import *
 import random
 from Core.FitnessFunction import FitnessFunction
-from Core.Speciman import Specimen
-
+from Core.Specimen import Specimen
 
 
 class Selection:

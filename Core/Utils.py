@@ -1,12 +1,12 @@
 import random
 from Core.FitnessFunction import FitnessFunction
-from Core.Speciman import Specimen
-from Core.ChromosomeFactory import ChromosomeFactory
+from Core.BinaryRepresentation.SpecimenBinary import SpecimenBinary
+from Core.BinaryRepresentation.ChromosomeBinaryFactory import ChromosomeBinaryFactory
 from typing import *
 
 
-def initRandomPopulation(populationSize: int, chromosomePrecision: int, fitnessFunction: FitnessFunction) -> \
-        List[Specimen]:
+def initRandomBinaryPopulation(populationSize: int, chromosomePrecision: int, fitnessFunction: FitnessFunction) -> \
+        List[SpecimenBinary]:
     """
     Creates random population for first population.
 
@@ -18,8 +18,8 @@ def initRandomPopulation(populationSize: int, chromosomePrecision: int, fitnessF
     functionDomain = fitnessFunction.getFunctionDomain()
     functionDimension = fitnessFunction.getFunctionDimension()
 
-    population = [Specimen(
-        [ChromosomeFactory.fromFloat(random.uniform(functionDomain[x][0], functionDomain[x][1]), chromosomePrecision, functionDomain[x]) for
+    population = [SpecimenBinary(
+        [ChromosomeBinaryFactory.fromFloat(random.uniform(functionDomain[x][0], functionDomain[x][1]), chromosomePrecision, functionDomain[x]) for
          x in range(functionDimension)], functionDimension) for _ in range(populationSize)]
 
     return population
