@@ -43,6 +43,7 @@ class Chromosome(ABC):
         """
         if not self._checkIfNumberIsInDomain(chromosome):
             raise ValueError("The number is not in the domain of function")
+        self._chromosome = chromosome
 
     def _checkIfNumberIsInDomain(self, chromosome: float):
         """
