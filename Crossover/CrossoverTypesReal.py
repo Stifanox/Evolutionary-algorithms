@@ -338,7 +338,9 @@ class LinearCrossover(CrossoverTypeReal):
         v = ((3 / 2) * x1 - (1 / 2) * x2, (3 / 2) * y1 - (1 / 2) * y2)
         w = (-(1 / 2) * x1 + (3 / 2) * x2, -(1 / 2) * y1 + (3 / 2) * y2)
 
-        # TODO: check if it is necessary to clamp z,v and v to the domain or not
+        z = ChromosomeReal.clampNumberToDomain(z[0], domain_x), ChromosomeReal.clampNumberToDomain(z[1], domain_y)
+        v = ChromosomeReal.clampNumberToDomain(v[0], domain_x), ChromosomeReal.clampNumberToDomain(v[1], domain_y)
+        w = ChromosomeReal.clampNumberToDomain(w[0], domain_x), ChromosomeReal.clampNumberToDomain(w[1], domain_y)
 
         z = SpecimenReal([ChromosomeReal(z[0], domain_x), ChromosomeReal(z[1], domain_y)], 2)
         v = SpecimenReal([ChromosomeReal(v[0], domain_x), ChromosomeReal(v[1], domain_y)], 2)
