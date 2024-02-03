@@ -23,3 +23,6 @@ class GUIParams:
     showChart: bool
     toMaximize: bool
     chromosomePrecision:int
+    blendArgument:float
+    isRealRepresentation:bool
+

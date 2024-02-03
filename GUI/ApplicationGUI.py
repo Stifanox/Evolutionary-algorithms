@@ -23,15 +23,19 @@ from matplotlib.backends.backend_tkagg import (
     FigureCanvasTkAgg
 )
 from GUI.GUIParams import GUIParams
+from GUI.Components.Checkboxes.UseRealRepresentationGUI import UseRealRepresentationGUI
+from typing import List
+from Core.Chromosome import Chromosome
 
-mutationOptions = ["TwoPointMutation", "SinglePointMutation", "EdgeMutation"]
-crossoverOptions = ["KPointCrossover", "ShuffleCrossover", "DiscreteCrossover", "UniformCrossover"]
 functionOptions = ["Hypersphere", "Hyperellipsoid", "Schwefel", "Ackley", "Michalewicz", "Rastrigin", "Rosenbrock",
                    "De Jong 3", "De Jong 5", "Martin And Gaddy", "Griewank", "Easom", "Goldstein And Price",
                    "Picheny Goldstein And Price", "Styblinski And Tang", "Mc Cormick", "Rana", "Egg Holder", "Keane",
                    "Schaffer 2", "Himmelblau", "Pits And Holes"]
 numOrPercentOptions = ["Number", "Percent"]
 selectionOptions = ["Top", "Roulette", "Tournament"]
+
+mutationUsed = ["TwoPointMutation", "SinglePointMutation", "EdgeMutation"]
+crossoverUsed = ["KPointCrossover", "ShuffleCrossover", "DiscreteCrossover", "UniformCrossover"]
 
 matplotlib.use("TkAgg")
 
@@ -41,9 +45,11 @@ class ApplicationGUI(Tk):
     def __init__(self, startEvolutionFunc: Callable):
         super().__init__()
         self.geometry("400x1000")
+        self.__useRealRepresentation = BooleanVar(self, False)
         self.__startEvolutionFunc = startEvolutionFunc
         self.__leftFrame = ttk.Frame()
         self.__crossoverType = DropdownVariable(StringVar(self), DoubleVar(self, value=2))
+        self.__blendArgument = DoubleVar(self, value=0)
         self.__selectionType = DropdownVariable(StringVar(self), DoubleVar(self, value=5))
         self.__mutationType = DropdownVariable(StringVar(self), DoubleVar(self, value=0.2))
         self.__functionType = DropdownVariable(StringVar(self), DoubleVar(self, value=0))
@@ -63,9 +69,11 @@ class ApplicationGUI(Tk):
         self.__leftFrame.grid(row=0, column=0, padx=(50, 0))
 
     def renderElements(self):
+        UseRealRepresentationGUI(self.__useRealRepresentation, self.__leftFrame, "Use real representation",
+                                 mutationUsed, crossoverUsed)
         ChromosomePrecisionGUI(self.__chromosomePrecision, self.__leftFrame, "Chromosome Precision")
-        CrossoverGUI(self.__crossoverType, self.__leftFrame, crossoverOptions)
-        MutationGUI(self.__mutationType, self.__leftFrame, mutationOptions)
+        CrossoverGUI(self.__crossoverType, self.__leftFrame, crossoverUsed,self.__blendArgument)
+        MutationGUI(self.__mutationType, self.__leftFrame, mutationUsed)
         FunctionGUI(self.__functionType, self.__leftFrame, functionOptions)
         ElitismGUI(self.__elitismType, self.__leftFrame, numOrPercentOptions)
         InversionGUI(self.__useInversion, self.__leftFrame, "Use inversion", "Probability (0,1)")
@@ -99,7 +107,9 @@ class ApplicationGUI(Tk):
             self.__epochCount.get(),
             self.__showChart.get(),
             self.__toMaximize.get(),
-            self.__chromosomePrecision.get()
+            self.__chromosomePrecision.get(),
+            self.__blendArgument.get(),
+            self.__useRealRepresentation.get()
         )
         return parameters
 
@@ -111,7 +121,7 @@ class ApplicationGUI(Tk):
         else:
             self.figure_canvas.draw()
 
-    def showResult(self, time: float, bestVal: float, argumentsForFunction):
+    def showResult(self, time: float, bestVal: float, argumentsForFunction:List[Chromosome]):
 
         newWindow = Toplevel(self)
         newWindow.geometry("300x100")

@@ -6,14 +6,15 @@ from threading import Thread
 def startEvo(appGUI: ApplicationGUI):
     appParams = appGUI.getParameters()
     evolution = EvolutionBuilder(appParams) \
+        .setIsReal(appParams.isRealRepresentation) \
+        .setMaximize(appParams.toMaximize) \
         .setSelection(appParams.selectionType, appParams.selectionNumOrPercent,
-                      appParams.selectionArgument,appParams.toMaximize) \
+                      appParams.selectionArgument, appParams.toMaximize) \
         .setElitism(appParams.elitismType, appParams.elitismArgument, appParams.toMaximize) \
         .setInverse(appParams.useInversion, appParams.inversionProbability) \
         .setMutation(appParams.mutationType, appParams.mutationProbability) \
-        .setMaximize(appParams.toMaximize) \
         .setShowChart(appParams.showChart) \
-        .setCrossover(appParams.crossoverType, appParams.crossoverArgument) \
+        .setCrossover(appParams.crossoverType, (appParams.crossoverArgument, appParams.blendArgument) ) \
         .buildEvolution(appParams.specimenCount, appParams.epochCount, appParams.chromosomePrecision)
 
     Thread(target=evolution.startEvolution, args=[appGUI.renderPlot, appGUI.showResult], daemon=True).start()

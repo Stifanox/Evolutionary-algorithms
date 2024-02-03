@@ -127,5 +127,4 @@ class Selection:
                 if len(selectedSpecimens) < self.__specimens_selection_amount:
                     selectedSpecimens.append(bestSpecimen)
 
-        print(len(selectedSpecimens))
         return selectedSpecimens

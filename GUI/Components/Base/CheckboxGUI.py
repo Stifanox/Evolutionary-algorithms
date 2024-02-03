@@ -16,3 +16,5 @@ class CheckboxGUI(ABC):
         checkbox = ttk.Checkbutton(self._innerFrame, text=self._label, takefocus=0, variable=self._state)
         checkbox.grid(row=0, column=0)
         self._innerFrame.pack(pady=(15, 0))
+
+

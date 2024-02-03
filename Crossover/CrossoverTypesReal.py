@@ -297,7 +297,7 @@ class FlatCrossover(CrossoverTypeReal):
         :return: Tuple of one, newly generated specimen with chromosomes in domains of parents (parents have the same domain).
         """
 
-        x1, y1, x2, y2, domain_x, domain_y = super().mix(a, b)
+        x1, y1, x2, y2, domain_x, domain_y = super()._mix(a, b)
 
         new_domain_x = sorted([x1, x2])
         new_domain_y = sorted([y1, y2])
@@ -332,7 +332,7 @@ class LinearCrossover(CrossoverTypeReal):
         :param args :  ignored
         :return: Tuple of one, newly generated specimen with chromosomes in domains of parents (parents have the same domain).
         """
-        x1, y1, x2, y2, domain_x, domain_y = super().mix(a, b)
+        x1, y1, x2, y2, domain_x, domain_y = super()._mix(a, b)
 
         z = ((1 / 2) * x1 + (1 / 2) * x2, (1 / 2) * y1 + (1 / 2) * y2)
         v = ((3 / 2) * x1 - (1 / 2) * x2, (3 / 2) * y1 - (1 / 2) * y2)

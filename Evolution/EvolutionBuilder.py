@@ -12,6 +12,11 @@ from Crossover.CrossoverTypes import KPointCrossover, ShuffleCrossover, Discrete
 from Elitism.Elitism import Elitism, ElitismByPercent, ElitismByCount
 from Core.EvolutionManager import EvolutionManager
 from Evolution.Evolution import Evolution
+from typing import Tuple
+from Mutation.MutationReal import UniformMutationReal
+from Mutation.MutationReal import GaussMutationReal
+from Crossover.CrossoverTypesReal import AverageCrossover, ArithmeticCrossover, BlendCrossoverAlfa, \
+    BlendCrossoverAlfaBeta, FlatCrossover, LinearCrossover
 
 
 class EvolutionBuilder:
@@ -24,6 +29,7 @@ class EvolutionBuilder:
         self.__mutation: Mutation | None = None
         self.__maximize = False
         self.__showChart = False
+        self.__isReal = False
 
         self.__fitnessFunction: FitnessFunction | None = None
         self.__GUIParams = GUIParameters
@@ -68,19 +74,35 @@ class EvolutionBuilder:
                 self.__mutation = SinglePointMutation(mutationArgument)
             case "EdgeMutation":
                 self.__mutation = EdgeMutation(mutationArgument)
+            case "UniformMutation":
+                self.__mutation = UniformMutationReal(mutationArgument)
+            case "GaussMutation":
+                self.__mutation = GaussMutationReal(mutationArgument)
 
         return self
 
-    def setCrossover(self, crossoverType: str, crossoverArgument: float):
+    def setCrossover(self, crossoverType: str, crossoverArguments: Tuple[float, float]):
         match crossoverType:
             case "KPointCrossover":
-                self.__crossover = KPointCrossover(int(crossoverArgument))
+                self.__crossover = KPointCrossover(int(crossoverArguments[0]))
             case "ShuffleCrossover":
                 self.__crossover = ShuffleCrossover()
             case "DiscreteCrossover":
-                self.__crossover = DiscreteCrossover(crossoverArgument)
+                self.__crossover = DiscreteCrossover(crossoverArguments[0])
             case "UniformCrossover":
                 self.__crossover = UniformCrossover()
+            case "ArithmeticCrossover":
+                self.__crossover = ArithmeticCrossover(crossoverArguments[0])
+            case "BlendCrossoverAlfa":
+                self.__crossover = BlendCrossoverAlfa(crossoverArguments[0])
+            case "BlendCrossoverAlfaBeta":
+                self.__crossover = BlendCrossoverAlfaBeta(crossoverArguments[0], crossoverArguments[1])
+            case "AverageCrossover":
+                self.__crossover = AverageCrossover()
+            case "FlatCrossover":
+                self.__crossover = FlatCrossover()
+            case "LinearCrossover":
+                self.__crossover = LinearCrossover(self.__fitnessFunction.calculateValue, self.__maximize)
 
         return self
 
@@ -113,12 +135,16 @@ class EvolutionBuilder:
         evoManager = EvolutionManager(specimenCount, epochCount, self.__fitnessFunction)
         evolution = Evolution(evoManager, chromosomePrecision, self.__selection, self.__crossover, self.__elitism,
                               self.__inverse,
-                              self.__mutation, self.__maximize, self.__showChart, self.__fitnessFunction)
+                              self.__mutation, self.__maximize, self.__showChart, self.__fitnessFunction, self.__isReal)
         return evolution
+
+    def setIsReal(self, isReal: bool):
+        self.__isReal = isReal
+        return self
 
     def __setFitnessFunction(self):
         benchmarkFunc = benchmark_functions.Hypersphere()
-        if self.__GUIParams.functionType in ["Martin And Gaddy","Styblinski And Tang"]:
+        if self.__GUIParams.functionType in ["Martin And Gaddy", "Styblinski And Tang"]:
             benchmarkFunc = getattr(bf, self.__GUIParams.functionType.replace(" ", "").replace("And", ""))(
                 int(self.__GUIParams.functionDimension))
         else:

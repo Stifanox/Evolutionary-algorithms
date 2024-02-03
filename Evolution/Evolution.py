@@ -13,7 +13,8 @@ from Core.FitnessFunction import FitnessFunction
 import random
 from typing import Callable, Collection
 from matplotlib.figure import Figure
-from Core.BinaryRepresentation.ChromosomeBinary import ChromosomeBinary
+from Core.Chromosome import Chromosome
+from Core.RealRepresentation.testReal import initRandomRealPopulation
 
 
 class Evolution:
@@ -27,7 +28,8 @@ class Evolution:
                  mutation: Mutation | None,
                  maximize: bool,
                  showChart: bool,
-                 fitnessFunction: FitnessFunction):
+                 fitnessFunction: FitnessFunction,
+                 isReal: bool):
         self.__evoManager = evoManager
         self.__selection: Selection | None = selection
         self.__crossover: CrossoverType | None = crossover
@@ -37,6 +39,7 @@ class Evolution:
         self.__maximize = maximize
         self.__showChart = showChart
         self.__chromosomePrecision = chromosomePrecision
+        self.__isReal = isReal
 
         self.__fitnessFunction = fitnessFunction
         self.__plot = Plot(evoManager, PlotLayout.ONE_LARGE, self.__maximize, 1)
@@ -45,12 +48,18 @@ class Evolution:
         self.__timeOfEvolution = 0
 
     def startEvolution(self, renderPlot: Callable[[bool, Figure], None],
-                       showResult: Callable[[float, float, Collection[ChromosomeBinary]], None]):
+                       showResult: Callable[[float, float, Collection[Chromosome]], None]):
         # Init 1st population
         startTime = time.time()
         prevTime = startTime
-        initPopulation = initRandomBinaryPopulation(self.__evoManager.getEpochSnapshot().populationSize,
-                                                    self.__chromosomePrecision, self.__fitnessFunction)
+        initPopulation = []
+
+        if self.__isReal:
+            initPopulation = initRandomRealPopulation(self.__evoManager.getEpochSnapshot().populationSize,
+                                                      self.__fitnessFunction)
+        else:
+            initPopulation = initRandomBinaryPopulation(self.__evoManager.getEpochSnapshot().populationSize,
+                                                        self.__chromosomePrecision, self.__fitnessFunction)
         self.__evoManager.setFirstPopulation(initPopulation)
 
         # Show chart
@@ -74,18 +83,14 @@ class Evolution:
                 self.__selection.selection(self.__evoManager.getEpochSnapshot().currentPopulation))
 
             # Crossover
-            # Population size - size of new population (from elitism) divided by 2 (mix returns 2 specimens)
-            for _ in range(int((self.__evoManager.getEpochSnapshot().populationSize - len(
-                    self.__evoManager.getEpochSnapshot().newPopulation)) / 2)):
-                specimens = self.__crossover.mix(random.choice(self.__evoManager.getEpochSnapshot().selectedPopulation),
-                                                 random.choice(self.__evoManager.getEpochSnapshot().selectedPopulation))
-                self.__evoManager.updateNewPopulation(specimens)
-
-            if self.__evoManager.getEpochSnapshot().populationSize > len(
+            while self.__evoManager.getEpochSnapshot().populationSize > len(
                     self.__evoManager.getEpochSnapshot().newPopulation):
                 specimens = self.__crossover.mix(random.choice(self.__evoManager.getEpochSnapshot().selectedPopulation),
                                                  random.choice(self.__evoManager.getEpochSnapshot().selectedPopulation))
-                self.__evoManager.updateNewPopulation([specimens[0]])
+                if len(self.__evoManager.getEpochSnapshot().newPopulation) + 1 >= self.__evoManager.getEpochSnapshot().populationSize:
+                    self.__evoManager.updateNewPopulation([specimens[0]])
+                else:
+                    self.__evoManager.updateNewPopulation(specimens)
 
             # Mutation
             for specimen in self.__evoManager.getEpochSnapshot().newPopulation:
@@ -103,7 +108,9 @@ class Evolution:
                                                                                                        end + 1 if start != 0 else end:]
                             chromosome.updateChromosome(newChromosome)
 
-            # Go to next epoch
+            for specimen in self.__evoManager.getEpochSnapshot().newPopulation:
+                specimen.setSpecimenValue(self.__fitnessFunction.calculateValue(specimen))
+
             print("Best specimen in population: ", end="")
             if self.__maximize:
                 print(max(self.__evoManager.getEpochSnapshot().newPopulation,
@@ -120,10 +127,13 @@ class Evolution:
                 self.__plot.redraw()
                 renderPlot(False, self.__plot.getFigure())
 
-            self.__saveToFile.export(FileExportVariant.Best, self.__maximize)
-            self.__saveToFile.export(FileExportVariant.Average, self.__maximize)
-            self.__saveToFile.export(FileExportVariant.StandardDeviation, self.__maximize)
+            # FIXME: uncomment if wanted to be saved to files
 
+            # self.__saveToFile.export(FileExportVariant.Best, self.__maximize)
+            # self.__saveToFile.export(FileExportVariant.Average, self.__maximize)
+            # self.__saveToFile.export(FileExportVariant.StandardDeviation, self.__maximize)
+
+            # Go to next epoch
             self.__evoManager.updateEpoch()
 
         if self.__showChart:
@@ -132,15 +142,16 @@ class Evolution:
             renderPlot(False, self.__plot.getFigure())
 
         endTime = time.time()
+
+        # Last eval
+        for specimen in self.__evoManager.getEpochSnapshot().currentPopulation:
+            specimen.setSpecimenValue(self.__fitnessFunction.calculateValue(specimen))
+
         if self.__maximize:
-            best = max(self.__evoManager.getEpochSnapshot().currentPopulation,
-                       key=lambda x: x.getSpecimenValue()).getSpecimenValue()
             bestSpecimen = sorted(self.__evoManager.getEpochSnapshot().currentPopulation, reverse=True,
                                   key=lambda x: x.getSpecimenValue())[0]
-            showResult(endTime - startTime, best, bestSpecimen.getChromosomes())
+            showResult(endTime - startTime, bestSpecimen.getSpecimenValue(), bestSpecimen.getChromosomes())
         else:
-            best = min(self.__evoManager.getEpochSnapshot().currentPopulation,
-                       key=lambda x: x.getSpecimenValue()).getSpecimenValue()
             bestSpecimen = sorted(self.__evoManager.getEpochSnapshot().currentPopulation,
                                   key=lambda x: x.getSpecimenValue())[0]
-            showResult(endTime - startTime, best, bestSpecimen.getChromosomes())
+            showResult(endTime - startTime, bestSpecimen.getSpecimenValue(), bestSpecimen.getChromosomes())
