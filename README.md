@@ -9,9 +9,11 @@
 # :star: Features
 Feature|Details
 ---|---
-Crossover|:heavy_check_mark: k-point, shuffle, discrete, uniform
+Crossover (binary)|:heavy_check_mark: k-point, shuffle, discrete, uniform
+Crossover (real)|:heavy_check_mark: arithmetic, blend α, blend αβ, average, flat, linear
 Selection|:heavy_check_mark: top, roulette, tournament
-Mutation|:heavy_check_mark: edge, single-point, two-point
+Mutation (binary)|:heavy_check_mark: edge, single-point, two-point
+Mutation (real)|:heavy_check_mark: uniform, gauss
 Elitism|:heavy_check_mark: by percent, by count
 Inversion|:heavy_check_mark: implemented
 GUI|:heavy_check_mark: implemented (in Tkinter)
